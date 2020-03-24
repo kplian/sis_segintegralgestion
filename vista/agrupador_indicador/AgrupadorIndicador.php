@@ -5,6 +5,10 @@
 *@author  (admin)
 *@date 08-06-2017 10:36:34
 *@description Archivo con la interfaz de usuario que permite la ejecucion de todas las funcionalidades del sistema
+ HISTORIAL DE MODIFICACIONES:
+
+ISSUE   FORK           FECHA        DESCRIPCION
+#1      endetr Juan    23/03/2020   Cambio de logica en agrupadores gestion 2019
 */
 
 header("content-type: text/javascript; charset=UTF-8");
@@ -370,7 +374,10 @@ Phx.vista.AgrupadorIndicador=Ext.extend(Phx.gridInterfaz,
                     renderer: function (value, p, record) {
                     	
                     	if(record.data['semaforo1']=='' || record.data['valor_real']==''){
-
+                            if(record.data['resultado']==0){//#1 
+	                    	    p.style="background-color:"+record.data['ruta_icono']+"; text-align: left";//#1 
+	                            return record.data['resultado'];//#1 
+                            }//#1 
                     	}
                     	else{
 	                    	

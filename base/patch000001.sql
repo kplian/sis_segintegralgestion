@@ -266,3 +266,9 @@ ALTER TABLE ssig.tlinea
 ALTER TABLE ssig.tagrupador_resultado
   ADD COLUMN ruta_icono VARCHAR(3000);
 /***********************************F-SCP-JUAN-SSIG-0-17/08/2018****************************************/
+
+/***********************************I-SCP-JUAN-SSIG-0-23/03/2020****************************************/
+
+ALTER TABLE ssig.tagrupador_indicador_resultado  --#1
+  ADD COLUMN no_reporta VARCHAR(50); --#1
+/***********************************F-SCP-JUAN-SSIG-0-23/03/2020****************************************/
