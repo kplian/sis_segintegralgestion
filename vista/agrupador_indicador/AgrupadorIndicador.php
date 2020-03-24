@@ -377,7 +377,7 @@ Phx.vista.AgrupadorIndicador=Ext.extend(Phx.gridInterfaz,
                             if(record.data['resultado']==0){//#1 
 	                    	    p.style="background-color:"+record.data['ruta_icono']+"; text-align: left";//#1 
 	                            return record.data['resultado'];//#1 
-                            }//#1 
+                            }//#1  
                     	}
                     	else{
 	                    	
