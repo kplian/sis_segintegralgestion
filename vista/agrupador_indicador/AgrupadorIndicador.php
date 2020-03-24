@@ -8,11 +8,11 @@
  HISTORIAL DE MODIFICACIONES:
 
 ISSUE   FORK           FECHA        DESCRIPCION
-#1      endetr Juan    23/03/2020   Cambio de logica en agrupadores gestion 2019
+#1      endetr Juan    23/03/2020   Cambio de logica en agrupadores gestion 2019 
 */
 
 header("content-type: text/javascript; charset=UTF-8");
-?>
+?> 
 <script>
 var vnivel=null;
 var v_this=null;
