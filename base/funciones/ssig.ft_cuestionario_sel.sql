@@ -360,10 +360,8 @@ BEGIN
 
     	begin
       		--Sentencia de la consulta de conteo de registros
-      		v_consulta:='SELECT COUNT(c.id_categoria)
-                        FROM ssig.tcategoria c
-                        inner join segu.tusuario usu1 on usu1.id_usuario = c.id_usuario_reg
-                        JOIN ssig.tpregunta p ON P.id_categoria=c.id_categoria
+      		v_consulta:='SELECT COUNT(c.id_cuestionario)
+                        FROM ssig.tcuestionario c
                         where c.id_cuestionario= '||v_parametros.id_cuestionario||' and c.habilitar=TRUE AND ';
 
             --Definicion de la respuesta
