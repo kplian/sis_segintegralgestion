@@ -360,4 +360,13 @@ CREATE TABLE ssig.tencuesta (
 WITH (oids = false);
 
 
+CREATE TABLE ssig.ttipo (
+  id_tipo SERIAL,
+  tipo VARCHAR,
+  observacion VARCHAR,
+  CONSTRAINT ttipo_pkey PRIMARY KEY(id_tipo)
+) INHERITS (pxp.tbase)
+WITH (oids = false);
+
+
 /***********************************F-SCP-MANU-SSIG-0-30/04/2020****************************************/
