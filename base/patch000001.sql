@@ -276,6 +276,15 @@ ALTER TABLE ssig.tagrupador_indicador_resultado  --#1
 
 /***********************************I-SCP-MANU-SSIG-0-30/04/2020****************************************/
 
+CREATE TABLE ssig.ttipo (
+  id_tipo SERIAL,
+  tipo VARCHAR,
+  observacion VARCHAR,
+  CONSTRAINT ttipo_pkey PRIMARY KEY(id_tipo)
+) INHERITS (pxp.tbase)
+WITH (oids = false);
+
+
 CREATE TABLE ssig.tcuestionario (
   id_cuestionario SERIAL,
   cuestionario VARCHAR,
@@ -360,13 +369,7 @@ CREATE TABLE ssig.tencuesta (
 WITH (oids = false);
 
 
-CREATE TABLE ssig.ttipo (
-  id_tipo SERIAL,
-  tipo VARCHAR,
-  observacion VARCHAR,
-  CONSTRAINT ttipo_pkey PRIMARY KEY(id_tipo)
-) INHERITS (pxp.tbase)
-WITH (oids = false);
+
 
 
 /***********************************F-SCP-MANU-SSIG-0-30/04/2020****************************************/
