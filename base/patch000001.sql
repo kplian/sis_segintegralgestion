@@ -373,3 +373,25 @@ WITH (oids = false);
 
 
 /***********************************F-SCP-MANU-SSIG-0-30/04/2020****************************************/
+
+
+/***********************************I-SCP-MANU-SSIG-1-30/04/2020****************************************/
+CREATE TABLE ssig.ttipo_evalucion (
+  id_tipo_evalucion SERIAL,
+  codigo VARCHAR(10),
+  nombre VARCHAR(100),
+  id_nivel_organizacional INTEGER,
+  tipo VARCHAR(20),
+  CONSTRAINT ttipo_evalucion_pkey PRIMARY KEY(id_tipo_evalucion)
+) INHERITS (pxp.tbase)
+WITH (oids = false);
+
+ALTER TABLE ssig.ttipo_evalucion
+  ALTER COLUMN id_tipo_evalucion SET STATISTICS 0;
+
+ALTER TABLE ssig.ttipo_evalucion
+  ALTER COLUMN nombre SET STATISTICS 0;
+
+ALTER TABLE ssig.ttipo_evalucion
+  ALTER COLUMN id_nivel_organizacional SET STATISTICS 0;
+/***********************************F-SCP-MANU-SSIG-1-30/04/2020****************************************/
