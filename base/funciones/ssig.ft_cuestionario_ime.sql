@@ -845,8 +845,8 @@ BEGIN
                   '../../../sis_segintegralgestion/vista/pregunta/Respuesta.php', --acceso_directo
                   item.id_funcionario::INTEGER,  --par_id_funcionario 
                   now(), --par_fecha
-                  'activo',
-                  '<font color="000000" size="5"><font size="4"> </font> </font><br><br><b></b>El motivo de la presente es solicitar evalúes el curso  de : <b>'||item.cuestionario||'</b><br> '||now()::date||'El cuestionario de evaluación se encuentra en el ENDESIS <br>en el siguiente enlace<br> <a href="http://172.18.79.204/etr/sis_seguridad/vista/_adm/index.php#main-tabs:CUE"></a><br> Agradezco de antemano la colaboración.<br>  Saludos<br> ',--par_descripcion
+                  'activo',                  
+                  '<font color="000000" size="5"><font size="4"> </font> </font><br><br><b></b>El motivo de la presente es solicitar que realice la evaluacion : <b> EVALUACION DE VALORES CORPORATIVOS </b><br> La evaluación se encuentra en el ENDESIS <br>en el siguiente enlace<br> <a href="http://172.18.79.204/etr/sis_seguridad/vista/_adm/index.php#main-tabs:CUE"></a><br> Agradezco de antemano la colaboración.<br>  Saludos<br> ',
                   1, --par_id_usuario admin
                   now(),
                   null,
@@ -854,7 +854,7 @@ BEGIN
                   'notificacion',--par_tipo
                   ''::varchar, --par_obs
                   'Respuesta',--par_clase
-                  'Evaluacion- ENDESIS',--par_titulo
+                  'Evaluacion',--par_titulo
                   '',--par_parametros
                   item.id_usuario::INTEGER,--par_id_usuario_alarma 
                  'Evaluacion - ENDESIS',--par_titulo correo
