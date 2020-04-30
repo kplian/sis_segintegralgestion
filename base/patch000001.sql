@@ -395,3 +395,23 @@ ALTER TABLE ssig.ttipo_evalucion
 ALTER TABLE ssig.ttipo_evalucion
   ALTER COLUMN id_nivel_organizacional SET STATISTICS 0;
 /***********************************F-SCP-MANU-SSIG-1-30/04/2020****************************************/
+
+
+/***********************************I-SCP-MANU-SSIG-2-30/04/2020****************************************/
+CREATE TABLE ssig.tcategoria (
+  id_categoria SERIAL,
+  categoria VARCHAR,
+  observacion VARCHAR,
+  id_cuestionario INTEGER NOT NULL,
+  habilitar BOOLEAN DEFAULT false NOT NULL,
+  peso NUMERIC(17,2),
+  CONSTRAINT tcategoria_pkey PRIMARY KEY(id_categoria),
+  CONSTRAINT tcategoria_fk FOREIGN KEY (id_cuestionario)
+    REFERENCES ssig.tcuestionario(id_cuestionario)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+    NOT DEFERRABLE
+) INHERITS (pxp.tbase)
+WITH (oids = false);
+
+/***********************************F-SCP-MANU-SSIG-2-30/04/2020****************************************/
