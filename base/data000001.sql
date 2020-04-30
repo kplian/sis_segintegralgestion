@@ -91,4 +91,16 @@ VALUES
   (1, (SELECT fecha_reg from param.tgestion limit 1), E'activo', 'Riesgo', '#F0D58C', '../../../sis_segintegralgestion/vista/ImagenesInterpretacionIndicador/Riesgo.png', 50, (SELECT id_gestion from param.tgestion limit 1),3),
   (1, (SELECT fecha_reg from param.tgestion limit 1), E'activo', 'Fracaso', '#FA8072', '../../../sis_segintegralgestion/vista/ImagenesInterpretacionIndicador/Fracaso.png', 0, (SELECT id_gestion from param.tgestion limit 1),4);
 /********************************************F-DAT-JUAN-SSIG-0-26/10/2017********************************************/ 
+/********************************************I-DAT-MMV-SSIG-2-30/04/2020********************************************/
+select pxp.f_insert_tgui ('Parametros', 'Parametros', 'SIGPAR', 'si', 3, '', 2, '', '', 'SSIG');
+select pxp.f_insert_testructura_gui ('SIGPAR', 'SSIG');
+select pxp.f_insert_tgui ('Encuestas', 'Encuestas', 'ENS', 'si', 2, 'sis_segintegralgestion\vista\encuesta\Encuesta.php', 3, '', 'Encuesta', 'SSIG');
+select pxp.f_insert_testructura_gui ('ENS', 'SIGPAR');
+select pxp.f_insert_tgui ('Cuestionario', 'Cuestionario', 'SIGCUE', 'si', 3, 'sis_segintegralgestion\vista\cuestionario\Cuestionario.php', 3, '', 'Cuestionario', 'SSIG');
+select pxp.f_insert_testructura_gui ('SIGCUE', 'SIGPAR');
+select pxp.f_insert_tgui ('Evaluacion', 'Evaluacion', 'EVARES', 'si', 3, '', 2, '', '', 'SSIG');
+select pxp.f_insert_testructura_gui ('EVARES', 'SSIG');
+select pxp.f_insert_tgui ('Evaluacion Funcionario', 'Evaluacion Funcionario', 'EVAFUN', 'si', 1, 'sis_segintegralgestion\vista\pregunta\Respuesta.php', 3, '', 'Respuesta', 'SSIG');
+select pxp.f_insert_testructura_gui ('EVAFUN', 'EVARES');
+/********************************************F-DAT-MMV-SSIG-2-30/04/2020********************************************/
 
