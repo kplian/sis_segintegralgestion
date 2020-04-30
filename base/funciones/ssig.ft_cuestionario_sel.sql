@@ -86,7 +86,7 @@ BEGIN
                         cue.estado,
 						usu1.cuenta as usr_reg,
 						usu2.cuenta as usr_mod,
-                        ''''::varchar as funcionarios, ,
+                        ''''::varchar as funcionarios,
                         (SELECT array_to_string( array_agg( cf.id_funcionario), '','' )
                         FROM ssig.tcuestionario_funcionario cf
                         JOIN ssig.tcuestionario c ON c.id_cuestionario=cf.id_cuestionario
