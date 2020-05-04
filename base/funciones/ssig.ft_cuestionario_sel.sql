@@ -19,6 +19,7 @@ $body$
  HISTORIAL DE MODIFICACIONES:
 #ISSUE				FECHA				AUTOR				DESCRIPCION
  #0				21-04-2020 08:31:41								Funcion que devuelve conjuntos de registros de las consultas relacionadas con la tabla 'ssig.tcuestionario'	
+ #3				04-05-2020 08:31:41			manuel guerra	corrección de count en función
  #
  ***************************************************************************/
 
@@ -343,7 +344,7 @@ BEGIN
         raise notice '%',v_consulta3;
         --raise exception '%',v_consulta3;
       	v_consulta:=v_consulta||v_parametros.filtro;                                                                                         
-      	v_consulta:=v_consulta||' order by  ' ||v_parametros.ordenacion|| ' ' || v_parametros.dir_ordenacion || ' limit ' || v_parametros.cantidad || ' offset ' || v_parametros.puntero;
+      	v_consulta:=v_consulta||' order by  ' ||v_parametros.ordenacion|| ' ' || v_parametros.dir_ordenacion || ' limit 1000 offset ' || v_parametros.puntero;
 
       --Devuelve la respuesta
       return v_consulta;
@@ -360,9 +361,21 @@ BEGIN
 
     	begin
       		--Sentencia de la consulta de conteo de registros
-      		v_consulta:='SELECT COUNT(c.id_cuestionario)
-                        FROM ssig.tcuestionario c
-                        where c.id_cuestionario= '||v_parametros.id_cuestionario||' and c.habilitar=TRUE AND ';
+      		v_consulta:='with recursive nodes(id_encuesta, id_encuesta_padre, nombre, pregunta) as (
+                              select padre.id_encuesta,padre.id_encuesta_padre,padre.nombre,padre.pregunta 
+                              from ssig.tencuesta padre
+                              where padre.id_encuesta_padre is null
+                              and padre.id_encuesta='|| v_parametros.id_cuestionario||'
+                              
+                              UNION ALL
+
+                              select hijo.id_encuesta,hijo.id_encuesta_padre, hijo.nombre,hijo.pregunta
+                              from ssig.tencuesta hijo
+                              join nodes n on n.id_encuesta = hijo.id_encuesta_padre    
+                          )
+                          select count(id_encuesta)
+                          from nodes n
+                          where n.pregunta=''si'' ';
 
             --Definicion de la respuesta
             v_consulta:=v_consulta||v_parametros.filtro;
