@@ -353,7 +353,7 @@ BEGIN
     /*********************************
     #TRANSACCION:  'SSIG_LISCUE_CONT'
     #DESCRIPCION: Conteo de registros de cuestionario
-    #AUTOR:   MANU
+    #AUTOR:   MANU  
     #FECHA:   20-11-2017 10:44:58
     ***********************************/
 
@@ -375,7 +375,7 @@ BEGIN
                           )
                           select count(id_encuesta)
                           from nodes n
-                          where n.pregunta=''si'' ';
+                          where n.pregunta=''si'' and ';--#3
 
             --Definicion de la respuesta
             v_consulta:=v_consulta||v_parametros.filtro;
