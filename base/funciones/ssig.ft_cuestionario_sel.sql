@@ -1,3 +1,5 @@
+--------------- SQL ---------------
+
 CREATE OR REPLACE FUNCTION ssig.ft_cuestionario_sel (
   p_administrador integer,
   p_id_usuario integer,
@@ -331,7 +333,7 @@ BEGIN
 --raise exception '%',v_consulta;
         --raise exception '%',v_consulta3;
       	v_consulta:=v_consulta||v_parametros.filtro;                                                                                         
-      	v_consulta:=v_consulta||' order by ' ||v_parametros.ordenacion|| ' ' || v_parametros.dir_ordenacion || ' limit 70 offset ' || v_parametros.puntero;
+      				v_consulta:=v_consulta||' order by ' ||v_parametros.ordenacion|| ' ' || v_parametros.dir_ordenacion || ' limit ' || v_parametros.cantidad || ' offset ' || v_parametros.puntero;
 
       --Devuelve la respuesta
       return v_consulta;

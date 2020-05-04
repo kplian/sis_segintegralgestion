@@ -234,8 +234,8 @@ Phx.vista.Temporal=Ext.extend(Phx.gridInterfaz,{
 				fieldLabel: 'Pregunta',
 				allowBlank: false,
 				anchor: '80%',
-				gwidth: 100,
-				maxLength: 500,
+				gwidth: 500,
+				sortable:false,
 				renderer: function (value, p, record, rowIndex, colIndex){					
 					var duplicar="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 					var nivel = record.data.sw_nivel==null?0:record.data.sw_nivel;									
@@ -247,8 +247,7 @@ Phx.vista.Temporal=Ext.extend(Phx.gridInterfaz,{
 						return  String.format('<div style="vertical-align:middle;text-align:left;"> '+duplicar+' <img src="../../../lib/imagenes/a_form.png"> '+ record.data.pregunta+' </div>');
 					}					
 				},
-				gwidth: 500,
-				sortable:false
+				
 			},
 			type: 'TextField',
 			filters: {pfiltro: 'pregunta', type: 'string'},
@@ -368,7 +367,7 @@ Phx.vista.Temporal=Ext.extend(Phx.gridInterfaz,{
 			form: false
 		},
 	],
-	tam_pag:50,	
+	tam_pag:80,	
 	title:'Temporal',
 	timeout: Phx.CP.config_ini.timeout,
     conexionFailure: Phx.CP.conexionFailure,            
