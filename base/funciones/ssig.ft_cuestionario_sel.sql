@@ -1,5 +1,3 @@
---------------- SQL ---------------
-
 CREATE OR REPLACE FUNCTION ssig.ft_cuestionario_sel (
   p_administrador integer,
   p_id_usuario integer,
@@ -180,43 +178,30 @@ BEGIN
                                                                       id_func_evaluado INTEGER                                                                      
                                                                       ) ON COMMIT DROP';
             EXECUTE(v_consulta1);           
-                                             
+                 -- raise EXCEPTION '%',v_parametros.id_cuestionario;                           
             FOR item IN(
-                        WITH RECURSIVE arbol AS (
-                            SELECT 
-                            enc.id_encuesta as id_categoria,
-                            enc.categoria,
-                            enc.nombre,
-                            enc.estado_reg,
-                            enc.id_usuario_reg,
-                            cue.id_cuestionario as id_cuestionario
-                            FROM ssig.tencuesta enc 
-                            JOIN ssig.tcuestionario cue on enc.id_encuesta = cue.id_tipo_evalucion
-                            JOIN ssig.ttipo_evalucion te on te.id_tipo_evalucion=cue.id_tipo_evalucion
-                            WHERE enc.grupo='si' and cue.id_cuestionario=v_parametros.id_cuestionario
-
-                            UNION
+            			with recursive nodes(id_encuesta, id_encuesta_padre, nombre,categoria, pregunta,estado_reg,id_usuario_reg) as (
+    						select padre.id_encuesta,padre.id_encuesta_padre,padre.nombre,padre.categoria,padre.pregunta,padre.estado_reg,padre.id_usuario_reg
+                            from ssig.tencuesta padre
+                            left join ssig.tcuestionario c on c.id_tipo_evalucion=padre.id_encuesta 
+                            where padre.id_encuesta_padre is null
+                            and c.id_cuestionario=v_parametros.id_cuestionario
                               
-                            SELECT 
-                            t.id_encuesta as id_categoria,
-                            t.categoria,
-                            t.nombre,
-                            t.estado_reg,
-                            t.id_usuario_reg,
-                            t.id_encuesta as id_cuestionario
-                            FROM ssig.tencuesta t
-                            JOIN ssig.tencuesta rt ON rt.id_encuesta_padre = t.id_encuesta
-                            WHERE t.categoria='si'
+                            UNION ALL
+
+                            select hijo.id_encuesta,hijo.id_encuesta_padre, hijo.nombre,hijo.categoria,hijo.pregunta,hijo.estado_reg,hijo.id_usuario_reg-- concat(n.nombre, ' ----> ', hijo.nombre)
+                            from ssig.tencuesta hijo
+                            join nodes n on n.id_encuesta = hijo.id_encuesta_padre    
                         )
-                        SELECT 
-                        arbol.id_categoria,
-                        arbol.categoria,
-                        arbol.nombre,
-                        arbol.estado_reg,
-                        arbol.id_usuario_reg,
-                        arbol.id_cuestionario
-                        FROM arbol
-                        WHERE arbol.categoria='si'  
+                          select 
+							n.id_encuesta as id_categoria,
+                            n.categoria,
+                            n.nombre,
+                            n.estado_reg,
+                            n.id_usuario_reg,
+                            n.id_encuesta_padre as id_cuestionario
+                          from nodes n
+                          where n.categoria='si'
                        ) LOOP
 
             	v_consulta2 :='';v_aux=1;
@@ -308,7 +293,7 @@ BEGIN
                                 ) LOOP
                           v_consulta2 :='';v_aux=0;
                           v_consulta2 := v_consulta2 || 'INSERT INTO 
-                                                         ttemporal(id_pregunta,
+                                                         	ttemporal(id_pregunta,
                                                                   pregunta,
                                                                   tipo,
                                                                   respuesta,
@@ -335,16 +320,18 @@ BEGIN
                                                     '||v_aux::INTEGER||',
                                                     '||v_parametros.id_funcionario::INTEGER||')';
 
-                          v_consulta3=v_consulta2; 
+                          --v_consulta3=v_consulta2; 
                           EXECUTE(v_consulta2);
                      END LOOP;
            		END LOOP;
+                
       	--Sentencia de la consulta
 		v_consulta:='SELECT * FROM ttemporal WHERE ';
-        raise notice '%',v_consulta3;
+        raise notice '%',v_consulta;
+--raise exception '%',v_consulta;
         --raise exception '%',v_consulta3;
       	v_consulta:=v_consulta||v_parametros.filtro;                                                                                         
-      	v_consulta:=v_consulta||' order by  ' ||v_parametros.ordenacion|| ' ' || v_parametros.dir_ordenacion || ' limit 1000 offset ' || v_parametros.puntero;
+      	v_consulta:=v_consulta||' order by ' ||v_parametros.ordenacion|| ' ' || v_parametros.dir_ordenacion || ' limit 70 offset ' || v_parametros.puntero;
 
       --Devuelve la respuesta
       return v_consulta;
@@ -353,7 +340,7 @@ BEGIN
     /*********************************
     #TRANSACCION:  'SSIG_LISCUE_CONT'
     #DESCRIPCION: Conteo de registros de cuestionario
-    #AUTOR:   MANU  
+    #AUTOR:   MANU
     #FECHA:   20-11-2017 10:44:58
     ***********************************/
 
@@ -361,21 +348,28 @@ BEGIN
 
     	begin
       		--Sentencia de la consulta de conteo de registros
-      		v_consulta:='with recursive nodes(id_encuesta, id_encuesta_padre, nombre, pregunta) as (
-                              select padre.id_encuesta,padre.id_encuesta_padre,padre.nombre,padre.pregunta 
-                              from ssig.tencuesta padre
-                              where padre.id_encuesta_padre is null
-                              and padre.id_encuesta='|| v_parametros.id_cuestionario||'
-                              
-                              UNION ALL
+      			 v_consulta:='with recursive nodes(id_encuesta, id_encuesta_padre, nombre, pregunta,categoria) as (
+                                    select padre.id_encuesta,padre.id_encuesta_padre,padre.nombre,padre.pregunta,padre.categoria 
+                                    from ssig.tencuesta padre
+                                    left join ssig.tcuestionario c on c.id_tipo_evalucion=padre.id_encuesta 
+                                    where padre.id_encuesta_padre is null
+                                    and c.id_cuestionario='|| v_parametros.id_cuestionario||'                                           
+                                                              
+                                    UNION ALL
 
-                              select hijo.id_encuesta,hijo.id_encuesta_padre, hijo.nombre,hijo.pregunta
-                              from ssig.tencuesta hijo
-                              join nodes n on n.id_encuesta = hijo.id_encuesta_padre    
-                          )
-                          select count(id_encuesta)
-                          from nodes n
-                          where n.pregunta=''si'' and ';--#3
+                                    select hijo.id_encuesta,hijo.id_encuesta_padre, hijo.nombre,hijo.pregunta,hijo.categoria
+                                    from ssig.tencuesta hijo
+                                    join nodes n on n.id_encuesta = hijo.id_encuesta_padre    
+                                )
+                                select count(id_encuesta)
+                                from nodes n
+                                where n.pregunta=''si'' or n.categoria=''si'' and ';--#3
+
+            --Definicion de la respuesta
+            v_consulta:=v_consulta||v_parametros.filtro;
+            --Devuelve la respuesta
+            return v_consulta;
+
 
             --Definicion de la respuesta
             v_consulta:=v_consulta||v_parametros.filtro;
