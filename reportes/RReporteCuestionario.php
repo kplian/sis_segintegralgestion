@@ -206,8 +206,9 @@ class RReporteCuestionario{
                         $Gerencia = $gerencia;
                         $fila++;
                     }
+                    $columna = 4;
                     foreach ($key3 as $res  => $key4){
-                        $columna = 4;
+
                         foreach ($key4 as $respue => $key5){
                              $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fila, $respue);
                               $columna ++;
