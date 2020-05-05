@@ -196,7 +196,7 @@ class RReporteCuestionario{
                 $this->content[$value['evaluado']][$value['descripcion_cargo']][$value['gerencia']][$value['nombre_cat']] [$value['resp']] ++;
             }
         }
-        $columna = 4;
+
         $Gerencia ='';
         foreach ($this->content as $funcionario =>$key1){
             foreach ($key1 as $cargo => $key2){
@@ -207,6 +207,7 @@ class RReporteCuestionario{
                         $fila++;
                     }
                     foreach ($key3 as $res  => $key4){
+                        $columna = 4;
                         foreach ($key4 as $respue => $key5){
                              $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fila, $respue);
                               $columna ++;
