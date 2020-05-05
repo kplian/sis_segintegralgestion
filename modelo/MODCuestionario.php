@@ -167,5 +167,32 @@ class MODCuestionario extends MODbase{
 		//Devuelve la respuesta
 		return $this->respuesta;
 	}
+	function reporteCuestionario(){
+		//Definicion de variables para ejecucion del procedimientp
+		$this->procedimiento='ssig.ft_cuestionario_sel';
+		$this->transaccion='SSIG_REEN_SEL';
+		$this->tipo_procedimiento='SEL';//tipo de transaccion
+        $this->setCount(false);
+
+        $this->setParametro('id_encuesta', 'id_encuesta', 'int4');
+
+        $this->captura('id_encuesta_padre','int4');
+		$this->captura('titulo','varchar');
+        $this->captura('grupo','varchar');
+        $this->captura('pesoxpregunta','numeric');
+        $this->captura('nombre_cat','varchar');
+        $this->captura('evaluador','text');
+        $this->captura('gerencia','varchar');
+        $this->captura('evaluado','text');
+        $this->captura('descripcion_cargo','varchar');
+        $this->captura('resp','numeric');
+
+		//Ejecuta la instruccion
+		$this->armarConsulta();
+		$this->ejecutarConsulta();
+		// var_dump($this->respuesta);exit;
+		//Devuelve la respuesta
+		return $this->respuesta;
+	}
 }
 ?>

@@ -10,7 +10,7 @@
  #0				21-04-2020 08:31:41								CREACION
 
 */
-
+require_once(dirname(__FILE__).'/../reportes/RReporteCuestionario.php');
 class ACTCuestionario extends ACTbase{    
 			
 	function listarCuestionario(){
@@ -70,7 +70,24 @@ class ACTCuestionario extends ACTbase{
 		$this->objFunc=$this->create('MODCuestionario');			
 		$this->res=$this->objFunc->listarRepCuestionario($this->objParam);		
 		$this->res->imprimirRespuesta($this->res->generarJson());
-	}		
+	}
+	function reporteCuestionario(){
+
+        $this->objFunc = $this->create('MODCuestionario');
+        $this->res = $this->objFunc->reporteCuestionario($this->objParam);
+        $titulo = 'Reporte Encuesta';
+        $nombreArchivo = uniqid(md5(session_id()) . $titulo);
+        $nombreArchivo .= '.xls';
+        $this->objParam->addParametro('nombre_archivo', $nombreArchivo);
+        $this->objParam->addParametro('datos', $this->res->datos);
+        $this->objReporteFormato = new RReporteCuestionario($this->objParam);
+        $this->objReporteFormato->generarDatos();
+        $this->objReporteFormato->generarReporte();
+        $this->mensajeExito = new Mensaje();
+        $this->mensajeExito->setMensaje('EXITO', 'Reporte.php', 'Reporte generado','Se generó con éxito el reporte: ' . $nombreArchivo, 'control');
+        $this->mensajeExito->setArchivoGenerado($nombreArchivo);
+        $this->mensajeExito->imprimirRespuesta($this->mensajeExito->generarJson());
+    }
 }
 
 ?>
