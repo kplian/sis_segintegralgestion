@@ -411,14 +411,13 @@ Phx.vista.Cuestionario=Ext.extend(Phx.gridInterfaz,{
     bexcelGroups: [0,1,2],
 
 
-        tabsouth:[
-            {
-                url: '../../../sis_segintegralgestion/vista/cuestionario_funcionario/CuestionarioFuncionario.php',
-                title: 'Evaluador(es)',
-                height: '50%',
-                cls: 'CuestionarioFuncionario'
-		    }
-	]
+    south:
+		{
+			url: '../../../sis_segintegralgestion/vista/cuestionario_funcionario/CuestionarioFuncionario.php',
+			title: 'Evaluador(es)',
+			height: '50%',
+			cls: 'CuestionarioFuncionario'
+		}	
 }	
 )
 </script>

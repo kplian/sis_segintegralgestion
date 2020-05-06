@@ -303,15 +303,14 @@ Phx.vista.CuestionarioFuncionario=Ext.extend(Phx.gridInterfaz,{
 	bnew:false,
 	bedit:false,
 	bprint:false,
-    tabeast:[
-        {
-            url:'../../../sis_segintegralgestion/vista/evaluados/Evaluados.php',
-            title:'Evaluados',
-            width:'50%',
-            cls:'Evaluados'
-        }
-    ]
-	}
+    east:
+	{
+		url:'../../../sis_segintegralgestion/vista/evaluados/Evaluados.php',
+		title:'Evaluados',
+		width:'50%',
+		cls:'Evaluados'
+	}    
+}
 )
 </script>
 		
