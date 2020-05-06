@@ -10,14 +10,12 @@ header("content-type: text/javascript; charset=UTF-8");
 ?>
 <script>
     Phx.vista.Encuesta=Ext.extend(Phx.arbGridInterfaz,{
-
+        fwidth: '50%',
         constructor:function(config){
             this.maestro=config.maestro;
-            //llama al constructor de la clase padre
             Phx.vista.Encuesta.superclass.constructor.call(this,config);
             this.init();
             this.iniciarEvento();
-
         },
         Atributos:[
             {
@@ -43,17 +41,63 @@ header("content-type: text/javascript; charset=UTF-8");
                 config:{
                     labelSeparator:'',
                     inputType:'hidden',
-                    name: 'tipo_nombre'
+                    name: 'pregunta'
                 },
                 type:'Field',
                 form:true
             },
             {
                 config:{
+                    labelSeparator:'',
+                    inputType:'hidden',
+                    name: 'grupo'
+                },
+                type:'Field',
+                form:true
+            },
+            {
+                config:{
+                    labelSeparator:'',
+                    inputType:'hidden',
+                    name: 'categoria'
+                },
+                type:'Field',
+                form:true
+            },
+            {
+                config:{
+                    labelSeparator:'',
+                    inputType:'hidden',
+                    name: 'pregunta'
+                },
+                type:'Field',
+                form:true
+            },
+            {
+                config:{
+                    name: 'tipo_nombre',
+                    fieldLabel: 'Tipo Accion',
+                    allowBlank: false,
+                    emptyText:'Tipo...',
+                    typeAhead: true,
+                    triggerAction: 'all',
+                    lazyRender:true,
+                    mode: 'local',
+                    anchor: '50%',
+                    store:['encuesta','grupo','categoria','pregunta']
+                },
+                type:'ComboBox',
+                id_grupo:0,
+                valorInicial: 'encuesta',
+                form:true,
+                grid: false
+            },
+            {
+                config:{
                     name: 'nro_order',
                     fieldLabel: 'Nro',
                     allowBlank: true,
-                    anchor: '80%',
+                    anchor: '50%',
                     gwidth: 100
                 },
                 type:'TextField',
@@ -66,11 +110,11 @@ header("content-type: text/javascript; charset=UTF-8");
                 config:{
                     name: 'nombre',
                     fieldLabel: 'Nombre',
-                    allowBlank: true,
-                    anchor: '80%',
-                    gwidth: 300
+                    allowBlank: false,
+                    anchor: '50%',
+                    gwidth: 400
                 },
-                type:'TextField',
+                type:'TextArea',
                 filters:{pfiltro:'eta.nombre',type:'string'},
                 id_grupo:1,
                 grid:true,
@@ -78,83 +122,32 @@ header("content-type: text/javascript; charset=UTF-8");
             },
             {
                 config:{
-                    name: 'tipo',
-                    fieldLabel: 'Tipo',
-                    allowBlank: false,
+                    name:'tipo',
+                    fieldLabel:'Tipo Evaluación',
+                    allowBlank:false,
                     emptyText:'Tipo...',
                     typeAhead: true,
                     triggerAction: 'all',
                     lazyRender:true,
                     mode: 'local',
-                    width:100,
-                    store:['auto_evaluacion','superior','medio','inferior','ninguno']
+                    anchor: '50%',
+                    gwidth: 100,
+                    store:new Ext.data.ArrayStore({
+                        fields: ['ID', 'valor'],
+                        data :	[
+
+                            ['auto_evaluacion','Auto Evaluación'],
+                            ['superior','Supervisor'],
+                            ['medio','pares '],
+                            ['inferior','Colaboradores']
+                        ]
+
+                    }),
+                    valueField:'ID',
+                    displayField:'valor'
                 },
                 type:'ComboBox',
                 id_grupo:0,
-                valorInicial: 'ninguno',
-                form:true,
-                grid: true
-            },
-            {
-                config:{
-                    name: 'grupo',
-                    fieldLabel: 'Grupo',
-                    allowBlank: false,
-                    emptyText:'Tipo...',
-                    typeAhead: true,
-                    triggerAction: 'all',
-                    lazyRender:true,
-                    mode: 'local',
-                    width:150,
-                    gwidth:100,
-                    store:['no','si']
-                },
-                type:'ComboBox',
-                filters:{pfiltro:'eta.grupo',type:'string'},
-                id_grupo:0,
-                valorInicial: 'no',
-                grid:true,
-                form:true
-            },
-            {
-                config:{
-                    name: 'categoria',
-                    fieldLabel: 'Categoria',
-                    allowBlank: false,
-                    emptyText:'Tipo...',
-                    typeAhead: true,
-                    triggerAction: 'all',
-                    lazyRender:true,
-                    mode: 'local',
-                    width:150,
-                    gwidth:100,
-                    store:['no','si']
-                },
-                type:'ComboBox',
-                filters:{pfiltro:'eta.categoria',type:'string'},
-                id_grupo:0,
-                valorInicial: 'no',
-                grid:true,
-                form:true
-            },
-            {
-                config:{
-                    name: 'pregunta',
-                    fieldLabel: 'Pregunta',
-                    allowBlank: false,
-                    emptyText:'Tipo...',
-                    typeAhead: true,
-                    triggerAction: 'all',
-                    lazyRender:true,
-                    mode: 'local',
-                    width:150,
-                    gwidth:100,
-                    store:['no','si']
-                },
-                type:'ComboBox',
-                filters:{pfiltro:'eta.pregunta',type:'string'},
-                id_grupo:0,
-                valorInicial: 'no',
                 grid:true,
                 form:true
             },
@@ -187,8 +180,8 @@ header("content-type: text/javascript; charset=UTF-8");
                     name: 'peso_categoria',
                     fieldLabel: 'Peso',
                     allowBlank: true,
-                    width: 50,
-                    gwidth: 100,
+                    anchor: '40%',
+                    gwidth: 100
                 },
                 type: 'NumberField',
                 filters: {pfiltro: 'eta.peso_categoria',type: 'numeric'},
@@ -223,7 +216,7 @@ header("content-type: text/javascript; charset=UTF-8");
             {
                 config: {
                     name: 'tipo_pregunta',
-                    fieldLabel: 'Tipo',
+                    fieldLabel: 'Tipo Pregunta',
                     allowBlank: false,
                     emptyText: 'Elija una opción...',
                     store: new Ext.data.ArrayStore({
@@ -235,7 +228,7 @@ header("content-type: text/javascript; charset=UTF-8");
                     }),
                     valueField: 'tipo',
                     displayField: 'tipo',
-                    gdisplayField: 'tipo',
+                    gdisplayField: 'tipo_pregunta',
                     hiddenName: 'tipo',
                     typeAhead: false,
                     triggerAction: 'all',
@@ -253,6 +246,7 @@ header("content-type: text/javascript; charset=UTF-8");
                 grid: true,
                 form: true
             },
+
             {
                 config:{
                     name: 'usr_reg',
@@ -419,6 +413,12 @@ header("content-type: text/javascript; charset=UTF-8");
         bsave:false,
 
         preparaMenu:function(n){
+            if(n.attributes.tipo_nodo == 'hijo' || n.attributes.tipo_nodo == 'raiz' || n.attributes.id == 'id'){
+                this.tbar.items.get('b-new-'+this.idContenedor).enable()
+            }
+            else {
+                this.tbar.items.get('b-new-'+this.idContenedor).disable()
+            }
             console.log(n.attributes.tipo_nodo);
             Phx.vista.Encuesta.superclass.preparaMenu.call(this,n);
         },
@@ -446,57 +446,76 @@ header("content-type: text/javascript; charset=UTF-8");
         },
         onButtonNew:function(n){
             Phx.vista.Encuesta.superclass.onButtonNew.call(this);
-            this.Cmp.grupo.on('select', function( combo, record, index){
-                if (record.data.field1 == 'si'){
-                    this.Cmp.pregunta.reset();
-                    this.Cmp.categoria.reset();
-                    this.ocultarComponente(this.Cmp.habilitado_categoria);
-                    this.ocultarComponente(this.Cmp.peso_categoria);
-                    this.ocultarComponente(this.Cmp.habilitado_pregunta);
-                    this.ocultarComponente(this.Cmp.tipo_pregunta);
-                }else{
+            this.eventoForm();
+        },
+
+        onButtonEdit:function(n){
+            Phx.vista.Encuesta.superclass.onButtonEdit.call(this);
+
+            if (this.Cmp.tipo_nombre.getValue()  === 'encuesta'){
+                this.mostrarComponente(this.Cmp.tipo);
+                this.ocultarComponente(this.Cmp.habilitado_categoria);
+                this.ocultarComponente(this.Cmp.peso_categoria);
+                this.ocultarComponente(this.Cmp.habilitado_pregunta);
+                this.ocultarComponente(this.Cmp.tipo_pregunta);
+            }
+            if (this.Cmp.tipo_nombre.getValue() === 'grupo'){
+                this.ocultarComponente(this.Cmp.tipo);
+                this.ocultarComponente(this.Cmp.habilitado_categoria);
+                this.ocultarComponente(this.Cmp.peso_categoria);
+                this.ocultarComponente(this.Cmp.habilitado_pregunta);
+                this.ocultarComponente(this.Cmp.tipo_pregunta);
+            }
+            if (this.Cmp.tipo_nombre.getValue() === 'categoria'){
+                this.ocultarComponente(this.Cmp.tipo);
+                this.mostrarComponente(this.Cmp.habilitado_categoria);
+                this.mostrarComponente(this.Cmp.peso_categoria);
+                this.ocultarComponente(this.Cmp.habilitado_pregunta);
+                this.ocultarComponente(this.Cmp.tipo_pregunta);
+            }
+            if (this.Cmp.tipo_nombre.getValue() === 'pregunta'){
+                this.ocultarComponente(this.Cmp.tipo);
+                this.ocultarComponente(this.Cmp.habilitado_categoria);
+                this.ocultarComponente(this.Cmp.peso_categoria);
+                this.mostrarComponente(this.Cmp.habilitado_pregunta);
+                this.mostrarComponente(this.Cmp.tipo_pregunta);
+                this.ocultarComponente(this.Cmp.nro_order);
+            }
+            this.eventoForm();
+        },
+        eventoForm:function () {
+            this.Cmp.tipo_nombre.on('select', function( combo, record, index){
+                if (record.data.field1 === 'encuesta'){
+                    this.mostrarComponente(this.Cmp.tipo);
                     this.ocultarComponente(this.Cmp.habilitado_categoria);
                     this.ocultarComponente(this.Cmp.peso_categoria);
                     this.ocultarComponente(this.Cmp.habilitado_pregunta);
                     this.ocultarComponente(this.Cmp.tipo_pregunta);
                 }
-            },this);
-
-            this.Cmp.categoria.on('select', function( combo, record, index){
-                if (record.data.field1 == 'si'){
-                    this.Cmp.pregunta.reset();
-                    this.Cmp.grupo.reset();
+                if (record.data.field1 === 'grupo'){
+                    this.ocultarComponente(this.Cmp.tipo);
+                    this.ocultarComponente(this.Cmp.habilitado_categoria);
+                    this.ocultarComponente(this.Cmp.peso_categoria);
+                    this.ocultarComponente(this.Cmp.habilitado_pregunta);
+                    this.ocultarComponente(this.Cmp.tipo_pregunta);
+                }
+                if (record.data.field1 === 'categoria'){
+                    this.ocultarComponente(this.Cmp.tipo);
                     this.mostrarComponente(this.Cmp.habilitado_categoria);
                     this.mostrarComponente(this.Cmp.peso_categoria);
                     this.ocultarComponente(this.Cmp.habilitado_pregunta);
                     this.ocultarComponente(this.Cmp.tipo_pregunta);
-                }else{
-
-                    this.ocultarComponente(this.Cmp.habilitado_categoria);
-                    this.ocultarComponente(this.Cmp.peso_categoria);
-                    this.ocultarComponente(this.Cmp.habilitado_pregunta);
-                    this.ocultarComponente(this.Cmp.tipo_pregunta);
                 }
-            },this);
-
-            this.Cmp.pregunta.on('select', function( combo, record, index){
-                if (record.data.field1 == 'si'){
-                    this.Cmp.grupo.reset();
-                    this.Cmp.categoria.reset();
+                if (record.data.field1 === 'pregunta'){
+                    this.ocultarComponente(this.Cmp.tipo);
                     this.ocultarComponente(this.Cmp.habilitado_categoria);
                     this.ocultarComponente(this.Cmp.peso_categoria);
                     this.mostrarComponente(this.Cmp.habilitado_pregunta);
                     this.mostrarComponente(this.Cmp.tipo_pregunta);
-                }else{
-                    this.ocultarComponente(this.Cmp.habilitado_categoria);
-                    this.ocultarComponente(this.Cmp.peso_categoria);
-                    this.ocultarComponente(this.Cmp.habilitado_pregunta);
-                    this.ocultarComponente(this.Cmp.tipo_pregunta);
+                    this.ocultarComponente(this.Cmp.nro_order);
                 }
             },this);
-        },
-        /*onButtonEdit:function(n) {
-            Phx.vista.Encuesta.superclass.onButtonEdit.call(this);
-        }*/
-        })
+
+        }
+    })
 </script>

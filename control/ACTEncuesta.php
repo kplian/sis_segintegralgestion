@@ -45,6 +45,8 @@ class ACTEncuesta extends ACTbase{
         }
         $this->objFunc=$this->create('MODEncuesta');
         $this->res=$this->objFunc->listarEncuestaArb();
+
+
         $this->res->setTipoRespuestaArbol();
         $arreglo=array();
 
@@ -53,14 +55,15 @@ class ACTEncuesta extends ACTbase{
 
         array_push($arreglo, array('nombre' => 'text', 'valores' => '#nro_order#'));
         array_push($arreglo,array('nombre'=>'cls','valor'=>'nombre'));
-        array_push($arreglo,array('nombre'=>'qtip','valores'=>'<b> #nro_order#</b><br/><b> #nombre#</b>'));
+        array_push($arreglo,array('nombre'=>'qtip','valores'=>'<b>#tipo_nombre#</b><br/><b> #nombre#</b>'));
 
-        /*Estas funciones definen reglas para los nodos en funcion a los tipo de nodos que contenga cada uno*/
+
         $this->res->addNivelArbol('tipo_nodo', 'raiz', array('leaf' => false, 'draggable' => false, 'allowDelete' => false, 'allowEdit' => true, 'cls' => 'folder', 'tipo_nodo' => 'raiz', 'icon' => '../../../lib/imagenes/a_form_edit.png'), $arreglo);
 
-        // $this->res->addNivelArbol('tipo_nodo', 'hijo', array('leaf' => false, 'draggable' => false, 'allowDelete' => true, 'allowEdit' => true, 'tipo_nodo' => 'hijo', 'icon' => '../../../lib/imagenes/a_form_edit.png'), $arreglo);
+        $this->res->addNivelArbol('tipo_nodo', 'hijo', array('leaf' => false, 'draggable' => false, 'allowDelete' => true, 'allowEdit' => true, 'tipo_nodo' => 'hijo', 'icon' => '../../../lib/imagenes/a_form_edit.png'), $arreglo);
 
-        // $this->res->addNivelArbol('tipo_nodo', 'hoja', array('leaf' => true, 'draggable' => false, 'allowDelete' => true, 'allowEdit' => true, 'tipo_nodo' => 'hoja', 'icon' => '../../../lib/imagenes/a_form.png'), $arreglo);
+        $this->res->addNivelArbol('tipo_nodo', 'hoja', array('leaf' => true, 'draggable' => false, 'allowDelete' => true, 'allowEdit' => true, 'tipo_nodo' => 'hoja', 'icon' => '../../../lib/imagenes/a_form.png'), $arreglo);
+
 
         $this->res->imprimirRespuesta($this->res->generarJson());
     }

@@ -1,5 +1,3 @@
---------------- SQL ---------------
-
 CREATE OR REPLACE FUNCTION ssig.ft_encuesta_sel (
   p_administrador integer,
   p_id_usuario integer,
@@ -14,11 +12,11 @@ $body$
  DESCRIPCION:   Funcion que devuelve conjuntos de registros de las consultas relacionadas con la tabla 'ssig.tencuesta'
  AUTOR: 		 (admin.miguel)
  FECHA:	        29-04-2020 06:10:09
- COMENTARIOS:	
+ COMENTARIOS:
 ***************************************************************************
  HISTORIAL DE MODIFICACIONES:
 #ISSUE				FECHA				AUTOR				DESCRIPCION
- #0				29-04-2020 06:10:09								Funcion que devuelve conjuntos de registros de las consultas relacionadas con la tabla 'ssig.tencuesta'	
+ #0				29-04-2020 06:10:09								Funcion que devuelve conjuntos de registros de las consultas relacionadas con la tabla 'ssig.tencuesta'
  #
  ***************************************************************************/
 
@@ -29,21 +27,21 @@ DECLARE
 	v_nombre_funcion   	text;
 	v_resp				varchar;
     v_where				varchar;
-			    
+
 BEGIN
 
 	v_nombre_funcion = 'ssig.ft_encuesta_sel';
     v_parametros = pxp.f_get_record(p_tabla);
 
-	/*********************************    
+	/*********************************
  	#TRANSACCION:  'SSIG_ETA_SEL'
  	#DESCRIPCION:	Consulta de datos
- 	#AUTOR:		admin.miguel	
+ 	#AUTOR:		admin.miguel
  	#FECHA:		29-04-2020 06:10:09
 	***********************************/
 
 	if(p_transaccion='SSIG_ETA_SEL')then
-     				
+
     	begin
     		--Sentencia de la consulta
 			v_consulta:='select
@@ -69,25 +67,25 @@ BEGIN
 						usu1.cuenta as usr_reg,
 						usu2.cuenta as usr_mod,
                         eta.tipo,
-                        eta.tipo_nombre		
+                        eta.tipo_nombre
 						from ssig.tencuesta eta
 						inner join segu.tusuario usu1 on usu1.id_usuario = eta.id_usuario_reg
 						left join segu.tusuario usu2 on usu2.id_usuario = eta.id_usuario_mod
 				        where  ';
-			
+
 			--Definicion de la respuesta
 			v_consulta:=v_consulta||v_parametros.filtro;
 			v_consulta:=v_consulta||' order by ' ||v_parametros.ordenacion|| ' ' || v_parametros.dir_ordenacion || ' limit ' || v_parametros.cantidad || ' offset ' || v_parametros.puntero;
 
 			--Devuelve la respuesta
 			return v_consulta;
-						
+
 		end;
 
-	/*********************************    
+	/*********************************
  	#TRANSACCION:  'SSIG_ETA_CONT'
  	#DESCRIPCION:	Conteo de registros
- 	#AUTOR:		admin.miguel	
+ 	#AUTOR:		admin.miguel
  	#FECHA:		29-04-2020 06:10:09
 	***********************************/
 
@@ -100,26 +98,26 @@ BEGIN
 					    inner join segu.tusuario usu1 on usu1.id_usuario = eta.id_usuario_reg
 						left join segu.tusuario usu2 on usu2.id_usuario = eta.id_usuario_mod
 					    where ';
-			
-			--Definicion de la respuesta		    
+
+			--Definicion de la respuesta
 			v_consulta:=v_consulta||v_parametros.filtro;
 
 			--Devuelve la respuesta
 			return v_consulta;
 
 		end;
-    
-    /*********************************    
+
+    /*********************************
  	#TRANSACCION:  'SSIG_ETAR_SEL'
  	#DESCRIPCION:	Arbol
- 	#AUTOR:		admin.miguel	
+ 	#AUTOR:		admin.miguel
  	#FECHA:		29-04-2020 06:10:09
 	***********************************/
 
 	elsif(p_transaccion='SSIG_ETAR_SEL')then
 
 		begin
-           
+
               if(v_parametros.node = 'id') then
                 v_where := ' eta.id_encuesta_padre is NULL  ';
               else
@@ -148,26 +146,33 @@ BEGIN
                                 usu1.cuenta as usr_reg,
                                 usu2.cuenta as usr_mod,
                                 eta.tipo,
-                                eta.tipo_nombre	
+                                eta.tipo_nombre,
+                                (case
+                                	when eta.tipo_nombre = ''encuesta'' then
+                                    ''raiz''
+                                    when eta.tipo_nombre in (''grupo'', ''categoria'') then
+                                    ''hijo''
+                                    else
+                                    ''hoja''
+                                    end)::varchar as tipo_nodo
                                 from ssig.tencuesta eta
                                 inner join segu.tusuario usu1 on usu1.id_usuario = eta.id_usuario_reg
                                 left join segu.tusuario usu2 on usu2.id_usuario = eta.id_usuario_mod
                                 where '||v_where|| '';
-                                
-            raise notice '%',v_consulta;
+
 			--Devuelve la respuesta
 			return v_consulta;
 
 		end;
-					
+
 	else
-					     
+
 		raise exception 'Transaccion inexistente';
-					         
+
 	end if;
-					
+
 EXCEPTION
-					
+
 	WHEN OTHERS THEN
 			v_resp='';
 			v_resp = pxp.f_agrega_clave(v_resp,'mensaje',SQLERRM);
@@ -182,3 +187,6 @@ CALLED ON NULL INPUT
 SECURITY INVOKER
 PARALLEL UNSAFE
 COST 100;
+
+ALTER FUNCTION ssig.ft_encuesta_sel (p_administrador integer, p_id_usuario integer, p_tabla varchar, p_transaccion varchar)
+  OWNER TO postgres;

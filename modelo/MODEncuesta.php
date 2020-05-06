@@ -76,6 +76,7 @@ class MODEncuesta extends MODbase{
 		$this->setParametro('tipo_pregunta','tipo_pregunta','varchar');
 		$this->setParametro('id_encuesta_padre','id_encuesta_padre','varchar');
         $this->setParametro('tipo','tipo','varchar');
+        $this->setParametro('tipo_nombre','tipo_nombre','varchar');
 
 		//Ejecuta la instruccion
 		$this->armarConsulta();
@@ -106,6 +107,7 @@ class MODEncuesta extends MODbase{
 		$this->setParametro('tipo_pregunta','tipo_pregunta','varchar');
 		$this->setParametro('id_encuesta_padre','id_encuesta_padre','varchar');
         $this->setParametro('tipo','tipo','varchar');
+        $this->setParametro('tipo_nombre','tipo_nombre','varchar');
 
 		//Ejecuta la instruccion
 		$this->armarConsulta();
@@ -167,6 +169,7 @@ class MODEncuesta extends MODbase{
         $this->captura('usr_mod','varchar');
         $this->captura('tipo','varchar');
         $this->captura('tipo_nombre','varchar');
+        $this->captura('tipo_nodo','varchar');
         //Ejecuta la instruccion
         $this->armarConsulta();
         $this->ejecutarConsulta();
