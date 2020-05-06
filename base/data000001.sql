@@ -108,3 +108,7 @@ select pxp.f_insert_testructura_gui ('EVAFUN', 'EVARES');
 select pxp.f_insert_tgui ('Reporte Cuestionario', 'Reporte Cuestionario', 'REPCUE', 'si', 2, 'sis_segintegralgestion\vista\reporte\FormReporte.php', 3, '', 'FormReporte', 'SSIG');
 select pxp.f_insert_testructura_gui ('REPCUE', 'EVARES');
 /********************************************F-DAT-MMV-SSIG-2-05/05/2020********************************************/
+
+/********************************************I-DAT-MANU-SSIG-0-06/05/2020********************************************/
+select pxp.f_insert_tgui ('Seguimiento Evaluaciones', 'Seguimiento Evaluaciones', 'SEGEVA', 'si', 3, 'sis_segintegralgestion\vista\encuesta\Seguimiento.php', 3, '', 'Seguimiento', 'SSIG');
+/********************************************F-DAT-MANU-SSIG-0-06/05/2020********************************************/

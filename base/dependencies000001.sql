@@ -363,3 +363,7 @@ ALTER TABLE ssig.tlinea
 ALTER TABLE ssig.tlinea
   ALTER COLUMN peso TYPE NUMERIC;
 /**********************************F-DEP-JUAN-SSIG-0-30/05/2019********************************************/
+
+/**********************************I-DEP-MANU-SSIG-0-06/05/2020********************************************/
+select pxp.f_insert_testructura_gui ('SEGEVA', 'EVARES');
+/**********************************F-DEP-MANU-SSIG-0-06/05/2020********************************************/
