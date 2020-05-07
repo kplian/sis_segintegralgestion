@@ -450,7 +450,9 @@ header("content-type: text/javascript; charset=UTF-8");
         },
 
         onButtonEdit:function(n){
+
             Phx.vista.Encuesta.superclass.onButtonEdit.call(this);
+            this.iniciarEvento();
 
             if (this.Cmp.tipo_nombre.getValue()  === 'encuesta'){
                 this.mostrarComponente(this.Cmp.tipo);

@@ -178,6 +178,7 @@ class MODCuestionario extends MODbase{
 
         $this->captura('id_encuesta_padre','int4');
 		$this->captura('titulo','varchar');
+		$this->captura('tipo','varchar');
         $this->captura('grupo','varchar');
         $this->captura('pesoxpregunta','numeric');
         $this->captura('nombre_cat','varchar');

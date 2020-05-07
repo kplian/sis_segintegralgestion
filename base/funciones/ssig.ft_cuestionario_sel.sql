@@ -633,6 +633,13 @@ BEGIN
                                           JOIN ssig.tencuesta l on l.id_encuesta = k.id_encuesta_padre
                                      WHERE e.id_encuesta = nodes.id_encuesta_padre
                                    ) as titulo,
+                                    (
+                                     select l.tipo
+                                     FROM ssig.tencuesta e
+                                          JOIN ssig.tencuesta k on k.id_encuesta = e.id_encuesta_padre
+                                          JOIN ssig.tencuesta l on l.id_encuesta = k.id_encuesta_padre
+                                     WHERE e.id_encuesta = nodes.id_encuesta_padre
+                                   ) as tipo,
                                    (
                                      select k.nombre
                                      FROM ssig.tencuesta e
