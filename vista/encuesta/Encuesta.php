@@ -16,6 +16,23 @@ header("content-type: text/javascript; charset=UTF-8");
             Phx.vista.Encuesta.superclass.constructor.call(this,config);
             this.init();
             this.iniciarEvento();
+            this.addHelp();
+        },
+        addHelp: function () {
+            this.addButton('lbl-color', {
+                xtype: 'label',
+                disabled: false,
+                style: {
+                    position: 'absolute',
+                    top: '5px',
+                    right: 0,
+                    width: '300px',
+                    'margin-right': '10px',
+                    float: 'right'
+                },
+                html: '<div style="display: inline-flex">' +
+                '<img src="../../../sis_segintegralgestion/vista/ImagenesIndicador/loguito360-01.png" width="300px"></div>'
+            });
         },
         Atributos:[
             {
@@ -460,6 +477,8 @@ header("content-type: text/javascript; charset=UTF-8");
                 this.ocultarComponente(this.Cmp.peso_categoria);
                 this.ocultarComponente(this.Cmp.habilitado_pregunta);
                 this.ocultarComponente(this.Cmp.tipo_pregunta);
+                this.mostrarComponente(this.Cmp.nro_order);
+
             }
             if (this.Cmp.tipo_nombre.getValue() === 'grupo'){
                 this.ocultarComponente(this.Cmp.tipo);
@@ -467,6 +486,8 @@ header("content-type: text/javascript; charset=UTF-8");
                 this.ocultarComponente(this.Cmp.peso_categoria);
                 this.ocultarComponente(this.Cmp.habilitado_pregunta);
                 this.ocultarComponente(this.Cmp.tipo_pregunta);
+                this.mostrarComponente(this.Cmp.nro_order);
+
             }
             if (this.Cmp.tipo_nombre.getValue() === 'categoria'){
                 this.ocultarComponente(this.Cmp.tipo);
@@ -474,6 +495,8 @@ header("content-type: text/javascript; charset=UTF-8");
                 this.mostrarComponente(this.Cmp.peso_categoria);
                 this.ocultarComponente(this.Cmp.habilitado_pregunta);
                 this.ocultarComponente(this.Cmp.tipo_pregunta);
+                this.mostrarComponente(this.Cmp.nro_order);
+
             }
             if (this.Cmp.tipo_nombre.getValue() === 'pregunta'){
                 this.ocultarComponente(this.Cmp.tipo);
@@ -482,6 +505,8 @@ header("content-type: text/javascript; charset=UTF-8");
                 this.mostrarComponente(this.Cmp.habilitado_pregunta);
                 this.mostrarComponente(this.Cmp.tipo_pregunta);
                 this.ocultarComponente(this.Cmp.nro_order);
+                this.mostrarComponente(this.Cmp.nro_order);
+
             }
             this.eventoForm();
         },
@@ -493,6 +518,8 @@ header("content-type: text/javascript; charset=UTF-8");
                     this.ocultarComponente(this.Cmp.peso_categoria);
                     this.ocultarComponente(this.Cmp.habilitado_pregunta);
                     this.ocultarComponente(this.Cmp.tipo_pregunta);
+                    this.mostrarComponente(this.Cmp.nro_order);
+
                 }
                 if (record.data.field1 === 'grupo'){
                     this.ocultarComponente(this.Cmp.tipo);
@@ -500,6 +527,8 @@ header("content-type: text/javascript; charset=UTF-8");
                     this.ocultarComponente(this.Cmp.peso_categoria);
                     this.ocultarComponente(this.Cmp.habilitado_pregunta);
                     this.ocultarComponente(this.Cmp.tipo_pregunta);
+                    this.mostrarComponente(this.Cmp.nro_order);
+
                 }
                 if (record.data.field1 === 'categoria'){
                     this.ocultarComponente(this.Cmp.tipo);
@@ -507,6 +536,8 @@ header("content-type: text/javascript; charset=UTF-8");
                     this.mostrarComponente(this.Cmp.peso_categoria);
                     this.ocultarComponente(this.Cmp.habilitado_pregunta);
                     this.ocultarComponente(this.Cmp.tipo_pregunta);
+                    this.mostrarComponente(this.Cmp.nro_order);
+
                 }
                 if (record.data.field1 === 'pregunta'){
                     this.ocultarComponente(this.Cmp.tipo);

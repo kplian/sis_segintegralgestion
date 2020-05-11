@@ -18,12 +18,13 @@ header("content-type: text/javascript; charset=UTF-8");
         constructor: function (config) {
             this.maestro = config.maestro;
             //llama al constructor de la clase padre
-            Phx.vista.Respuesta.superclass.constructor.call(this, config);            
+
+            Phx.vista.Respuesta.superclass.constructor.call(this, config);
             this.init();
             this.store.baseParams = {id_usuario: Phx.CP.config_ini.id_usuario};
             //this.load({params: {start: 0, limit: this.tam_pag, pes_estado: 'proceso'}});   
             this.load({params: {start: 0, limit: this.tam_pag, pes_estado: 'proceso'}});
-            
+           //
             this.addButton('btnRespCue', {
                 text: 'Responder cuestionario',
                 iconCls: 'bchecklist',
@@ -39,15 +40,29 @@ header("content-type: text/javascript; charset=UTF-8");
                 handler : this.onFinalizarCuestionario,
                 tooltip : '<b>Finalizar Cuestionario</b>'
             });
-            //this.iniciarEventos(); 
+            this.addHelp();
+            // this.iniciarEventos();
+
             this.finCons = true; 
                    
         },
-        //
-        iniciarEventos: function () {            	
-            
+        addHelp: function () {
+            this.addButton('lbl-color', {
+                xtype: 'label',
+                disabled: false,
+                style: {
+                    position: 'absolute',
+                    top: '5px',
+                    right: 0,
+                    width: '300px',
+                    'margin-right': '10px',
+                    float: 'right'
+                },
+                html: '<div style="display: inline-flex">' +
+                '<img src="../../../sis_segintegralgestion/vista/ImagenesIndicador/loguito360-01.png" width="300px"></div>'
+            });
         },
-        //
+       //
         onReloadPage: function (m) {
             this.maestro = m;        
         },

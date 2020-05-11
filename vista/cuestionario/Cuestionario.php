@@ -39,7 +39,24 @@ Phx.vista.Cuestionario=Ext.extend(Phx.gridInterfaz,{
 			handler : this.onEnviarCorreo,
 			tooltip : '<b>Enviar Correo</b>'
 		});
+		this.addHelp();
 	},
+    addHelp: function () {
+        this.addButton('lbl-color', {
+            xtype: 'label',
+            disabled: false,
+            style: {
+                position: 'absolute',
+                top: '5px',
+                right: 0,
+                width: '300px',
+                'margin-right': '10px',
+                float: 'right'
+            },
+            html: '<div style="display: inline-flex">' +
+            '<img src="../../../sis_segintegralgestion/vista/ImagenesIndicador/loguito360-01.png" width="300px"></div>'
+        });
+    },
 	//
 	onReloadPage: function (m) {
 		this.maestro = m;        
@@ -51,7 +68,7 @@ Phx.vista.Cuestionario=Ext.extend(Phx.gridInterfaz,{
         Ext.Msg.show({
             title:'Confirmación',
             scope: this,
-            msg: 'Esta seguro de enviar una notifiacion? Cuestionario, Si esta de acuerdo presione el botón "Si"',
+            msg: 'Se enviará una notificación para que se realice la evaluación. ¿Desea continuar?',
             buttons: Ext.Msg.YESNO,
             fn: function(id, value, opt) {
                 if (id == 'yes') {

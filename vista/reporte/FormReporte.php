@@ -65,12 +65,29 @@ header("content-type: text/javascript; charset=UTF-8");
         constructor : function(config) {
             Phx.vista.FormReporte.superclass.constructor.call(this, config);
             this.init();
+            this.addHelp();
         },
         tipo : 'reporte',
         clsSubmit : 'bprint',
         ActSave:'../../sis_segintegralgestion/control/Cuestionario/reporteCuestionario',
         agregarArgsExtraSubmit: function() {
             this.argumentExtraSubmit.encuesta = this.Cmp.id_encuesta.getRawValue();
+        },
+        addHelp: function () {
+            this.addButton('lbl-color', {
+                xtype: 'label',
+                disabled: false,
+                style: {
+                    position: 'absolute',
+                    top: '5px',
+                    right: 0,
+                    width: '300px',
+                    'margin-right': '30px',
+                    float: 'right'
+                },
+                html: '<div style="display: inline-flex">' +
+                '<img src="../../../sis_segintegralgestion/vista/ImagenesIndicador/loguito360-01.png" width="200px"></div>'
+            });
         }
     })
 </script>

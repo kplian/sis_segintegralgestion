@@ -33,6 +33,23 @@ header("content-type: text/javascript; charset=UTF-8");
             this.PanelSouth.destroy();
             this.load({params:{start:0, limit:this.tam_pag, pes_estado: 'enviado'}})		
             this.finCons = true;
+            this.addHelp();
+        },
+        addHelp: function () {
+            this.addButton('lbl-color', {
+                xtype: 'label',
+                disabled: false,
+                style: {
+                    position: 'absolute',
+                    top: '5px',
+                    right: 0,
+                    width: '250px',
+                    'margin-right': '10px',
+                    float: 'right'
+                },
+                html: '<div style="display: inline-flex">' +
+                '<img src="../../../sis_segintegralgestion/vista/ImagenesIndicador/loguito360-01.png" width="250px"></div>'
+            });
         },
         //
         onReloadPage: function (m) {
