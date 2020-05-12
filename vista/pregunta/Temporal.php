@@ -33,7 +33,7 @@ Phx.vista.Temporal=Ext.extend(Phx.gridInterfaz,{
 		Ext.getCmp('b-save-' + this.idContenedor).show();   					
 		v_id_cuestionario_funcionario=v_maestro.data.id_cuestionario_funcionario;		
 		v_id_usuario=v_maestro.data.id_usuario;
-		this.store.baseParams = {id_cuestionario: v_maestro.data.id_cuestionario, id_usuario: v_id_usuario, id_funcionario: v_id_funcionario};
+		this.store.baseParams = {id_cuestionario: v_maestro.data.id_cuestionario, id_usuario: v_id_usuario, id_funcionario: v_id_funcionario,fil:'si'};
 		this.load({params:{start:0, limit:this.tam_pag}});
 		this.iniciarEventos(); 
 		this.cmbGestion.on('select', function(){			
@@ -46,9 +46,11 @@ Phx.vista.Temporal=Ext.extend(Phx.gridInterfaz,{
 	iniciarEventos: function(){
 		this.CargarEncabezado();
 		this.cmbGestion.store.baseParams = {id_cuestionario_funcionario: v_id_cuestionario_funcionario};
-		this.cmbGestion.on('select',function (cmb, dat, index) {			
-			this.sm.clearSelections();			
-			this.store.baseParams = {id_funcionario: dat.data.id_funcionario, id_usuario: Phx.CP.config_ini.id_usuario};			
+		this.cmbGestion.on('select',function (cmb, dat, index) {
+            this.store.removeAll();
+            this.cmbGestion.modificado = true;
+            this.sm.clearSelections();
+			this.store.baseParams = {id_funcionario: dat.data.id_funcionario, id_usuario: Phx.CP.config_ini.id_usuario,fil:'si'};
 			v_id_funcionario=dat.data.id_funcionario;								
 			this.store.reload();
 		}, this);
@@ -419,6 +421,7 @@ Phx.vista.Temporal=Ext.extend(Phx.gridInterfaz,{
 		}),
 		valueField: 'id_funcionario',
 		triggerAction: 'all',
+        modificado:true,
 		displayField: 'desc_funcionario1',
 		hiddenName: 'id_funcionario',
 		mode: 'remote',

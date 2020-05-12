@@ -183,27 +183,32 @@ class RReporteCuestionario{
         $num = 1;
         $columna = 4;
 
+        // var_dump($this->titulos);exit;
+
         foreach ($this->titulos as $value => $key){
             $resultado = array_merge($key, array('Promedio'=>''));
-            if ($num == 1){
+            /*if ($num == 1){
                 $col = $columna ;
             }else{
                 $col =  count($resultado) +  $columna - 1;
-            }
+            }*/
             foreach ($resultado as $item => $key2){
                 $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columnaSub,6, $item);
                 $this->docexcel->getActiveSheet()->getColumnDimension($this->equivalencias[$columnaSub])->setWidth(13);
                 $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[4] . "6:" . $this->equivalencias[$columnaSub] . "6")->getAlignment()->setWrapText(true);
+                $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna ,5, $value);
+
                 $columnaSub ++;
                 $this->list= $columnaSub ;
+
             }
-            $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($col ,5, $value);
-            $this->docexcel->getActiveSheet()->mergeCells($this->equivalencias[$col]."5:".$this->equivalencias[$col +  count($resultado) - 1]."5");
-            if ($num == 1 ){
-                $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[$col]."5:".$this->equivalencias[$col +  count($resultado) - 1]."6")->applyFromArray($styleCatalogo);
-            }else{
-                $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[$col]."5:".$this->equivalencias[$col +  count($resultado) - 1]."6")->applyFromArray($styleCatalogo2);
-            }
+
+            //  $this->docexcel->getActiveSheet()->mergeCells($this->equivalencias[$col]."5:".$this->equivalencias[$col +  count($resultado) - 1]."5");
+            // if ($num == 1 ){
+               //  $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[$col]."5:".$this->equivalencias[$col +  count($resultado) - 1]."6")->applyFromArray($styleCatalogo);
+            // }else{
+           //     $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[$col]."5:".$this->equivalencias[$col +  count($resultado) - 1]."6")->applyFromArray($styleCatalogo2);
+            // }
             $columna ++;
             $num++;
         }
@@ -273,7 +278,7 @@ class RReporteCuestionario{
                     }
                     foreach ($key3 as $evaluador => $key4) {
 
-                        if ($this->objParam->getParametro('datos')[0]['tipo'] != 'auto_evaluacion') {
+                     //   if ($this->objParam->getParametro('datos')[0]['tipo'] != 'auto_evaluacion') {
                             if ($evaluador != $eva) {
                                 if ($eva != '') {
                                     $fila = $fila + 2;
@@ -282,7 +287,7 @@ class RReporteCuestionario{
                                 $eva = $evaluador;
                                 $fila++;
                             }
-                        }
+                      //  }
                         $columna = 4;
                         foreach ($key4 as $grupo => $key5){
                             $contar = count($key5);

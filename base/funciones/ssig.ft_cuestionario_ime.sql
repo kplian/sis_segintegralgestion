@@ -41,6 +41,9 @@ DECLARE
     v_record					record;
     v_id_cuestionario_funcionario integer;
     v_recor_evaluador			  record;
+    v_templa				  varchar;
+    v_comill					varchar;
+    v_lista						varchar;
 BEGIN
 
     v_nombre_funcion = 'ssig.ft_cuestionario_ime';
@@ -818,6 +821,32 @@ BEGIN
                 from orga.tfuncionario
                 where id_funcionario = item.id_funcionario;
 
+
+                v_templa = '<style>
+                              .imagen {
+                                  position: absolute;
+                                  width: 75%;
+                                  z-index: -10;
+                              }
+                              .texto {
+                                  width: 56%;
+                                  padding-top: 26%;
+                                  font-size: 11px;
+                                  padding-left: 220px;
+                              }
+                          </style>
+                <div>
+                        <img src="https://i.ibb.co/LkY5gbD/fondo-presentacion-03.jpg" class="imagen">
+                        <div class="texto">
+                            <p>El motivo de la presente es solicitar que realice la evaluacion :<b>Evaluación de valores corporativos</b>
+                                <br>
+                                La evaluación se encuentra en el ENDESIS
+                                <br>
+                                en el siguiente enlace
+                            </p>
+                        </div>
+                        </div>';
+
                 INSERT INTO param.talarma(
                   acceso_directo,
                   id_funcionario,
@@ -848,7 +877,7 @@ BEGIN
                   item.id_funcionario::INTEGER,  --par_id_funcionario
                   now(), --par_fecha
                   'activo',
-                  '<font color="000000" size="5"><font size="4"> </font> </font><br><br><b></b>El motivo de la presente es solicitar que realice la evaluacion : <b> EVALUACION DE VALORES CORPORATIVOS </b><br> La evaluación se encuentra en el ENDESIS <br>en el siguiente enlace<br> <a href="http://172.18.79.204/etr/sis_seguridad/vista/_adm/index.php#main-tabs:CUE"></a><br> Agradezco de antemano la colaboración.<br>  Saludos<br> ',
+                  v_templa,
                   1, --par_id_usuario admin
                   now(),
                   null,
@@ -859,8 +888,8 @@ BEGIN
                   'Evaluacion',--par_titulo
                   '',--par_parametros
                   item.id_usuario::INTEGER,--par_id_usuario_alarma
-                 'Evaluacion - ENDESIS',--par_titulo correo
-                  v_correo,--par_correos
+                  '',--par_titulo correo
+                  'miguel.ale19934@gmail.com',--par_correos
                   '',--par_documentos
                   NULL,--p_id_proceso_wf
                   NULL,--p_id_estado_wf
@@ -979,7 +1008,36 @@ BEGIN
 	ELSIF(p_transaccion='SSIG_FINCUE_IME')then
 
     	begin
+		--	raise exception 'error %',v_parametros.id_cuestionario;
 
+
+
+
+           if (select count(ev.id_funcionario)
+              from ssig.tcuestionario cu
+              inner join ssig.tcuestionario_funcionario cud on cud.id_cuestionario = cu.id_cuestionario
+              inner join ssig.tevaluados ev on ev.id_cuestionario_funcionario = cud.id_cuestionario_funcionario
+              inner join orga.vfuncionario fu on fu.id_funcionario = ev.id_funcionario
+              where cu.id_cuestionario = v_parametros.id_cuestionario) <> (select count(re.id_func_evaluado)
+                                                                          from ssig.trespuestas re
+                                                                          where re.id_cuestionario = v_parametros.id_cuestionario)then
+
+                      select pxp.list( fu.desc_funcionario1) into v_lista
+                      from ssig.tcuestionario cu
+                      inner join ssig.tcuestionario_funcionario cud on cud.id_cuestionario = cu.id_cuestionario
+                      inner join ssig.tevaluados ev on ev.id_cuestionario_funcionario = cud.id_cuestionario_funcionario
+                      inner join orga.vfuncionario fu on fu.id_funcionario = ev.id_funcionario
+                      where cu.id_cuestionario = v_parametros.id_cuestionario and ev.id_funcionario not in (select re.id_func_evaluado
+                                                  								from ssig.trespuestas re
+                                                                                where re.id_cuestionario = v_parametros.id_cuestionario);
+
+                      raise exception 'Aun no evaluado los funcionarios %',v_lista;
+
+
+            end if;
+
+
+		--	raise exception 'error %',v_parametros.id_cuestionario;
         	update ssig.tcuestionario_funcionario
             set estado='finalizado',sw_final='si'
             where id_cuestionario=v_parametros.id_cuestionario
