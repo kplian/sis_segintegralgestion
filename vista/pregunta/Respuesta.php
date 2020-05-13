@@ -1,5 +1,10 @@
 <?php 
+/**
 
+ HISTORIAL DE MODIFICACIONES:
+#ISSUE				FECHA				AUTOR				DESCRIPCION
+#12 			13/05/2020			manuel guerra			agregar campo de nombre de evaluacion
+*/
 header("content-type: text/javascript; charset=UTF-8");
 ?>
 <script>
@@ -186,17 +191,7 @@ header("content-type: text/javascript; charset=UTF-8");
                 },
                 type: 'Field',
                 form: true
-            },            
-            {
-                config: {
-                    fieldLabel: 'Estado',
-                    labelSeparator: 'Estado',                    
-                    name: 'estado_reg'
-                },
-                type: 'Field',
-                form: true,
-                grid: true
-            },
+            },                        
             {
                 config: {
                     labelSeparator: '',
@@ -223,6 +218,35 @@ header("content-type: text/javascript; charset=UTF-8");
                 },
                 type: 'Field',
                 form: true
+            },//#12
+            {
+                config: {
+                    name: 'nombre',
+                    fieldLabel: 'Cuestionario',
+                    allowBlank: false,
+                    anchor: '80%',
+                    gwidth: 400,                    
+                },
+                type: 'TextField',
+                filters: {pfiltro: 'en.nombre', type: 'string'},
+                id_grupo: 1,
+                grid: true,
+                form: false
+            },
+            {
+                config: {
+                    name: 'tipo',
+                    fieldLabel: 'Tipo',
+                    allowBlank: false,
+                    anchor: '80%',
+                    gwidth: 100,
+                    maxLength: 500
+                },
+                type: 'TextField',
+                filters: {pfiltro: 'en.tipo', type: 'string'},
+                id_grupo: 1,
+                grid: false,
+                form: false
             },
             {
                 config: {
@@ -236,7 +260,7 @@ header("content-type: text/javascript; charset=UTF-8");
                 type: 'TextField',
                 filters: {pfiltro: 'cue.cuestionario', type: 'string'},
                 id_grupo: 1,
-                grid: true,
+                grid: false,
                 form: false
             },
             {
@@ -283,7 +307,17 @@ header("content-type: text/javascript; charset=UTF-8");
                 id_grupo: 1,
                 grid: true,
                 form: true
-            },                      
+            },                    
+            {
+                config: {
+                    fieldLabel: 'Estado',
+                    labelSeparator: 'Estado',                    
+                    name: 'estado_reg'
+                },
+                type: 'Field',
+                form: true,
+                grid: true
+            },              
             {
                 config:{
                     name: 'fecha_reg',
@@ -385,6 +419,8 @@ header("content-type: text/javascript; charset=UTF-8");
             {name: 'codigo', type: 'string'},
             {name: 'cuenta', type: 'string'},
             {name: 'sw_final', type: 'string'},           
+            {name: 'nombre', type: 'string'},   //#12
+            {name: 'tipo', type: 'string'},   //#12
         ],
         sortInfo: {
             field: 'id_cuestionario_funcionario',
