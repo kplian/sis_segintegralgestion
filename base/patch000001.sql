@@ -266,3 +266,152 @@ ALTER TABLE ssig.tlinea
 ALTER TABLE ssig.tagrupador_resultado
   ADD COLUMN ruta_icono VARCHAR(3000);
 /***********************************F-SCP-JUAN-SSIG-0-17/08/2018****************************************/
+
+/***********************************I-SCP-JUAN-SSIG-0-23/03/2020****************************************/
+
+ALTER TABLE ssig.tagrupador_indicador_resultado  --#1
+  ADD COLUMN no_reporta VARCHAR(50); --#1
+/***********************************F-SCP-JUAN-SSIG-0-23/03/2020****************************************/
+
+
+/***********************************I-SCP-MANU-SSIG-0-30/04/2020****************************************/
+
+CREATE TABLE ssig.ttipo (
+  id_tipo SERIAL,
+  tipo VARCHAR,
+  observacion VARCHAR,
+  CONSTRAINT ttipo_pkey PRIMARY KEY(id_tipo)
+) INHERITS (pxp.tbase)
+WITH (oids = false);
+
+
+CREATE TABLE ssig.tcuestionario (
+  id_cuestionario SERIAL,
+  cuestionario VARCHAR,
+  observacion VARCHAR,
+  habilitar BOOLEAN DEFAULT false NOT NULL,
+  peso NUMERIC(17,2),
+  estado VARCHAR(10),
+  id_tipo INTEGER,
+  id_tipo_evalucion INTEGER,
+  CONSTRAINT tcuestionario_pkey PRIMARY KEY(id_cuestionario),
+  CONSTRAINT tcuestionario_fk FOREIGN KEY (id_tipo)
+    REFERENCES ssig.ttipo(id_tipo)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+    NOT DEFERRABLE
+) INHERITS (pxp.tbase)
+WITH (oids = false);
+
+
+CREATE TABLE ssig.tcuestionario_funcionario (
+  id_cuestionario_funcionario SERIAL,
+  id_cuestionario INTEGER NOT NULL,
+  id_funcionario INTEGER NOT NULL,
+  sw_final VARCHAR(2) DEFAULT 'no'::character varying NOT NULL,
+  estado VARCHAR(10) DEFAULT 'proceso'::character varying,
+  CONSTRAINT tcuestionario_funcionario_pkey PRIMARY KEY(id_cuestionario_funcionario),
+  CONSTRAINT tcuestionario_funcionario_fk FOREIGN KEY (id_cuestionario)
+    REFERENCES ssig.tcuestionario(id_cuestionario)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION
+    NOT DEFERRABLE,
+  CONSTRAINT tcuestionario_funcionario_fk1 FOREIGN KEY (id_funcionario)
+    REFERENCES orga.tfuncionario(id_funcionario)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+    NOT DEFERRABLE
+) INHERITS (pxp.tbase)
+WITH (oids = false);
+
+
+
+CREATE TABLE ssig.trespuestas (
+  id_respuestas SERIAL,
+  id_funcionario INTEGER,
+  id_cuestionario INTEGER,
+  id_categoria INTEGER,
+  id_pregunta INTEGER,
+  respuesta INTEGER,
+  respuesta_texto TEXT,
+  id_func_evaluado INTEGER,
+  CONSTRAINT tcurso_funcionario_eval_pkey PRIMARY KEY(id_respuestas)
+) 
+WITH (oids = false);
+
+
+CREATE TABLE ssig.tevaluados (
+  id_evaluados SERIAL,
+  id_cuestionario_funcionario INTEGER,
+  id_funcionario INTEGER,
+  evaluar VARCHAR(10),
+  CONSTRAINT tevaluados_pkey PRIMARY KEY(id_evaluados)
+) INHERITS (pxp.tbase)
+WITH (oids = false);
+
+
+CREATE TABLE ssig.tencuesta (
+  id_encuesta SERIAL,
+  nro_order VARCHAR(20),
+  nombre VARCHAR(500),
+  grupo VARCHAR(5) DEFAULT 'no'::character varying NOT NULL,
+  categoria VARCHAR(5) DEFAULT 'no'::character varying NOT NULL,
+  habilitado_categoria BOOLEAN,
+  peso_categoria NUMERIC,
+  pregunta VARCHAR(5) DEFAULT 'no'::character varying NOT NULL,
+  habilitado_pregunta BOOLEAN,
+  tipo_pregunta VARCHAR(50),
+  id_encuesta_padre INTEGER,
+  tipo VARCHAR(50),
+  tipo_nombre VARCHAR(50),
+  CONSTRAINT tencuesta_pkey PRIMARY KEY(id_encuesta)
+) INHERITS (pxp.tbase)
+WITH (oids = false);
+
+
+
+
+
+/***********************************F-SCP-MANU-SSIG-0-30/04/2020****************************************/
+
+
+/***********************************I-SCP-MANU-SSIG-1-30/04/2020****************************************/
+CREATE TABLE ssig.ttipo_evalucion (
+  id_tipo_evalucion SERIAL,
+  codigo VARCHAR(10),
+  nombre VARCHAR(100),
+  id_nivel_organizacional INTEGER,
+  tipo VARCHAR(20),
+  CONSTRAINT ttipo_evalucion_pkey PRIMARY KEY(id_tipo_evalucion)
+) INHERITS (pxp.tbase)
+WITH (oids = false);
+
+ALTER TABLE ssig.ttipo_evalucion
+  ALTER COLUMN id_tipo_evalucion SET STATISTICS 0;
+
+ALTER TABLE ssig.ttipo_evalucion
+  ALTER COLUMN nombre SET STATISTICS 0;
+
+ALTER TABLE ssig.ttipo_evalucion
+  ALTER COLUMN id_nivel_organizacional SET STATISTICS 0;
+/***********************************F-SCP-MANU-SSIG-1-30/04/2020****************************************/
+
+
+/***********************************I-SCP-MANU-SSIG-2-30/04/2020****************************************/
+CREATE TABLE ssig.tcategoria (
+  id_categoria SERIAL,
+  categoria VARCHAR,
+  observacion VARCHAR,
+  id_cuestionario INTEGER NOT NULL,
+  habilitar BOOLEAN DEFAULT false NOT NULL,
+  peso NUMERIC(17,2),
+  CONSTRAINT tcategoria_pkey PRIMARY KEY(id_categoria),
+  CONSTRAINT tcategoria_fk FOREIGN KEY (id_cuestionario)
+    REFERENCES ssig.tcuestionario(id_cuestionario)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+    NOT DEFERRABLE
+) INHERITS (pxp.tbase)
+WITH (oids = false);
+
+/***********************************F-SCP-MANU-SSIG-2-30/04/2020****************************************/

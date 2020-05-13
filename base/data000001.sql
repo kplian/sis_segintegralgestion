@@ -91,4 +91,36 @@ VALUES
   (1, (SELECT fecha_reg from param.tgestion limit 1), E'activo', 'Riesgo', '#F0D58C', '../../../sis_segintegralgestion/vista/ImagenesInterpretacionIndicador/Riesgo.png', 50, (SELECT id_gestion from param.tgestion limit 1),3),
   (1, (SELECT fecha_reg from param.tgestion limit 1), E'activo', 'Fracaso', '#FA8072', '../../../sis_segintegralgestion/vista/ImagenesInterpretacionIndicador/Fracaso.png', 0, (SELECT id_gestion from param.tgestion limit 1),4);
 /********************************************F-DAT-JUAN-SSIG-0-26/10/2017********************************************/ 
+/********************************************I-DAT-MMV-SSIG-2-30/04/2020********************************************/
+select pxp.f_insert_tgui ('Parametros', 'Parametros', 'SIGPAR', 'si', 3, '', 2, '', '', 'SSIG');
+select pxp.f_insert_testructura_gui ('SIGPAR', 'SSIG');
+select pxp.f_insert_tgui ('Encuestas', 'Encuestas', 'ENS', 'si', 2, 'sis_segintegralgestion\vista\encuesta\Encuesta.php', 3, '', 'Encuesta', 'SSIG');
+select pxp.f_insert_testructura_gui ('ENS', 'SIGPAR');
+select pxp.f_insert_tgui ('Cuestionario', 'Cuestionario', 'SIGCUE', 'si', 3, 'sis_segintegralgestion\vista\cuestionario\Cuestionario.php', 3, '', 'Cuestionario', 'SSIG');
+select pxp.f_insert_testructura_gui ('SIGCUE', 'SIGPAR');
+select pxp.f_insert_tgui ('Evaluacion', 'Evaluacion', 'EVARES', 'si', 3, '', 2, '', '', 'SSIG');
+select pxp.f_insert_testructura_gui ('EVARES', 'SSIG');
+select pxp.f_insert_tgui ('Evaluacion Funcionario', 'Evaluacion Funcionario', 'EVAFUN', 'si', 1, 'sis_segintegralgestion\vista\pregunta\Respuesta.php', 3, '', 'Respuesta', 'SSIG');
+select pxp.f_insert_testructura_gui ('EVAFUN', 'EVARES');
+/********************************************F-DAT-MMV-SSIG-2-30/04/2020********************************************/
 
+/********************************************I-DAT-MMV-SSIG-2-05/05/2020********************************************/
+select pxp.f_insert_tgui ('Reporte Cuestionario', 'Reporte Cuestionario', 'REPCUE', 'si', 2, 'sis_segintegralgestion\vista\reporte\FormReporte.php', 3, '', 'FormReporte', 'SSIG');
+select pxp.f_insert_testructura_gui ('REPCUE', 'EVARES');
+/********************************************F-DAT-MMV-SSIG-2-05/05/2020********************************************/
+
+/********************************************I-DAT-MANU-SSIG-0-06/05/2020********************************************/
+select pxp.f_insert_tgui ('Seguimiento Evaluaciones', 'Seguimiento Evaluaciones', 'SEGEVA', 'si', 3, 'sis_segintegralgestion\vista\encuesta\Seguimiento.php', 3, '', 'Seguimiento', 'SSIG');
+/********************************************F-DAT-MANU-SSIG-0-06/05/2020********************************************/
+
+
+/********************************************I-DAT-MANU-SSIG-1-07/05/2020********************************************/
+select pxp.f_insert_tgui ('<i class="fa fa-pencil-square-o 2x" aria-hidden="true" style="font-size:24px"></i>SISTEMA DE EVALUACIONES', '', 'EVAL', 'si', 1, '', 1, '', '', 'EVAL');
+select pxp.f_insert_tgui ('Parametros', 'Parametros', 'PAREVA', 'si', 1, '', 2, '', '', 'EVAL');
+select pxp.f_insert_tgui ('Evaluacion', 'Evaluacion', 'EVALU', 'si', 2, '', 2, '', '', 'EVAL');
+select pxp.f_insert_tgui ('Reportes', 'Reportes', 'REPEVA', 'si', 3, '', 2, '', '', 'EVAL');
+select pxp.f_insert_tgui ('Conf. Evaluaciones', 'Conf. Evaluaciones', 'CONFEVA', 'si', 1, 'sis_segintegralgestion\vista\encuesta\Encuesta.php', 3, '', 'Encuesta', 'EVAL');
+select pxp.f_insert_tgui ('Tipo Evaluación', 'Tipo Evaluación', 'TPOEVA', 'si', 2, 'sis_segintegralgestion\vista\tipo_evalucion\TipoEvalucion.php', 3, '', 'TipoEvalucion', 'EVAL');
+select pxp.f_insert_tgui ('Evaluación', 'Evaluación', 'EVAFUNC', 'si', 1, 'sis_segintegralgestion\vista\pregunta\Respuesta.php', 3, '', 'Respuesta', 'EVAL');
+select pxp.f_insert_tgui ('Reporte Evaluacion', 'Reporte Evaluacion', 'REPEVAL', 'si', 1, 'sis_segintegralgestion\vista\reporte\FormReporte.php', 3, '', 'FormReporte', 'EVAL');
+/********************************************F-DAT-MANU-SSIG-1-07/05/2020********************************************/

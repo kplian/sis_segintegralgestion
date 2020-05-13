@@ -363,3 +363,19 @@ ALTER TABLE ssig.tlinea
 ALTER TABLE ssig.tlinea
   ALTER COLUMN peso TYPE NUMERIC;
 /**********************************F-DEP-JUAN-SSIG-0-30/05/2019********************************************/
+
+/**********************************I-DEP-MANU-SSIG-0-06/05/2020********************************************/
+select pxp.f_insert_testructura_gui ('SEGEVA', 'EVARES');
+/**********************************F-DEP-MANU-SSIG-0-06/05/2020********************************************/
+
+
+/**********************************I-DEP-MANU-SSIG-1-06/05/2020********************************************/
+select pxp.f_insert_testructura_gui ('EVAL', 'SISTEMA');
+select pxp.f_insert_testructura_gui ('PAREVA', 'EVAL');
+select pxp.f_insert_testructura_gui ('EVALU', 'EVAL');
+select pxp.f_insert_testructura_gui ('REPEVA', 'EVAL');
+select pxp.f_insert_testructura_gui ('CONFEVA', 'PAREVA');
+select pxp.f_insert_testructura_gui ('TPOEVA', 'PAREVA');
+select pxp.f_insert_testructura_gui ('EVAFUNC', 'EVALU');
+select pxp.f_insert_testructura_gui ('REPEVAL', 'REPEVA');
+/**********************************F-DEP-MANU-SSIG-1-06/05/2020********************************************/
