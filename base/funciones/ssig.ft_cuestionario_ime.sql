@@ -823,29 +823,41 @@ BEGIN
 
 
                 v_templa = '<style>
-                              .imagen {
-                                  position: absolute;
-                                  width: 75%;
-                                  z-index: -10;
-                              }
-                              .texto {
-                                  width: 56%;
-                                  padding-top: 26%;
-                                  font-size: 11px;
-                                  padding-left: 220px;
-                              }
-                          </style>
-                <div>
-                        <img src="https://i.ibb.co/LkY5gbD/fondo-presentacion-03.jpg" class="imagen">
-                        <div class="texto">
-                            <p>El motivo de la presente es solicitar que realice la evaluacion :<b>Evaluación de valores corporativos</b>
-                                <br>
-                                La evaluación se encuentra en el ENDESIS
-                                <br>
-                                en el siguiente enlace
-                            </p>
-                        </div>
-                        </div>';
+	#contenedor {
+            position: relative;
+            padding: 2px;
+            width: 87%;
+    }
+
+    .contenedor_imagen {
+      width: 75%;
+      padding: 5px;
+    }
+
+    .contenedor_texto {
+      width: 49%;
+    position: absolute;
+    top: 228px;
+    left: 130px;
+    padding: 5px;
+    text-align: justify;
+    }
+
+	</style>
+    <div id="contenedor">
+        <div class="contenedor_imagen">
+		<img
+		src="https://i.ibb.co/LkY5gbD/fondo-presentacion-03.jpg"
+		style="width:100%;z-index:1" >
+		</div>
+        <div class="contenedor_texto">
+            <b>Estimados y estimadas</b> <br>
+			<br>
+            Les damos la bienvenida a la Fase Piloto del nuevo Sistema de Evaluación de Desempeño 360O de ENDE Transmisión.
+            Agradecemos de antemano su valiosa participación en este proceso de mejora.
+            La evaluación se encuentra en el <b>ENDESIS</b> en el siguiente enlace: <br>
+		</div>
+    </div>';
 
                 INSERT INTO param.talarma(
                   acceso_directo,
@@ -888,7 +900,7 @@ BEGIN
                   'Evaluacion',--par_titulo
                   '',--par_parametros
                   item.id_usuario::INTEGER,--par_id_usuario_alarma
-                  '',--par_titulo correo
+                  'Evaluación de Desempeño 360',--par_titulo correo
                   'miguel.ale19934@gmail.com',--par_correos
                   '',--par_documentos
                   NULL,--p_id_proceso_wf
