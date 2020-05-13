@@ -853,7 +853,7 @@ BEGIN
         <div class="contenedor_texto">
             <b>Estimados y estimadas</b> <br>
 			<br>
-            Les damos la bienvenida a la Fase Piloto del nuevo Sistema de Evaluación de Desempeño 360O de ENDE Transmisión.
+            Les damos la bienvenida a la Fase Piloto del nuevo Sistema de Evaluación de Desempeño 360 de ENDE Transmisión.
             Agradecemos de antemano su valiosa participación en este proceso de mejora.
             La evaluación se encuentra en el <b>ENDESIS</b> en el siguiente enlace: <br>
 		</div>
