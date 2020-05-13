@@ -8,6 +8,7 @@
  HISTORIAL DE MODIFICACIONES:
 #ISSUE				FECHA				AUTOR				DESCRIPCION
  #0				24-04-2020				 (mguerra)				CREACION	
+ #10			13/05/2020				manuel guerra		validación de registrar todas las respuestas en la evaluación
 
 */
 
@@ -160,33 +161,46 @@ Phx.vista.Temporal=Ext.extend(Phx.gridInterfaz,{
 		}
 	},
 	//
-	onButtonSave:function(o){		
+	onButtonSave:function(o, x, force){			
+		//#10
+		var total=this.store.totalLength;		
+		var count=0;
+		for(var j=0;j<total;j++){
+			if(this.store.data.items[j].data.sw_nivel==0){
+				count++;
+			}
+		}		
 		var filas=this.store.getModifiedRecords();
 		if(filas.length>0){	
 			if(confirm("Está seguro de guardar los cambios?")){
-				var data={};
-				for(var i=0;i<filas.length;i++){
+				var data={},i=0;
+				for(i=0;i<filas.length;i++){
 					data[i]=filas[i].data;
-					data[i]._fila=this.store.indexOf(filas[i])+1
+					data[i]._fila=this.store.indexOf(filas[i])+1					
 					this.agregarArgsExtraSubmit(filas[i].data);
-					Ext.apply(data[i],this.argumentExtraSubmit);					
+					Ext.apply(data[i],this.argumentExtraSubmit);																
+				}		
+				console.log(i,'-',count);	
+				if(i==count){
+					Phx.CP.loadingShow();
+					Ext.Ajax.request({
+						url:this.ActSave,
+						params:{	
+							_tipo:'matriz',
+							'row':String(Ext.util.JSON.encode(data)), 
+							id_cuestionario: v_maestro.data.id_cuestionario,
+							'id_funcionario':v_id_funcionario,												
+						},			
+						isUpload:this.fileUpload,					
+						success:this.successSaveFileUpload,				
+						failure: this.conexionFailure,
+						timeout:this.timeout,
+						scope:this
+					});
+				}else{
+					alert('Aun le faltan respuestas por responder, favor completarlo');
 				}
-				Phx.CP.loadingShow();
-				Ext.Ajax.request({
-					url:this.ActSave,
-					params:{	
-						_tipo:'matriz',
-						'row':String(Ext.util.JSON.encode(data)), 
-						id_cuestionario: v_maestro.data.id_cuestionario,
-						'id_funcionario':v_id_funcionario
-					},			
-					isUpload:this.fileUpload,
-					success:this.successSaveFileUpload,				
-					failure: this.conexionFailure,
-					timeout:this.timeout,
-					scope:this
-				});
-			}			
+			}
 		}
 	},
 	//
@@ -295,7 +309,8 @@ Phx.vista.Temporal=Ext.extend(Phx.gridInterfaz,{
 						p.style="background-color:#cce6ff;";
 					}
 					if(record.data.respuesta =='' && record.data.sw_nivel !=1){
-						return 'Doble click aqui' 
+						//return 'Doble click aqui' 
+						return  String.format('<p><span style="color: #ff0000;">Doble click aqui</span></p>');
 					}
 					else{
 						return String.format('{0}', record.data['respuesta']);
@@ -368,6 +383,15 @@ Phx.vista.Temporal=Ext.extend(Phx.gridInterfaz,{
 			grid: false,
 			form: false
 		},
+		{
+			config: {
+				labelSeparator: '',
+				inputType: 'hidden',
+				name: 'cant_reg'
+			},
+			type: 'Field',
+			form: true
+		},
 	],
 	tam_pag:80,	
 	title:'Temporal',
@@ -377,6 +401,7 @@ Phx.vista.Temporal=Ext.extend(Phx.gridInterfaz,{
 	ActList:'../../sis_segintegralgestion/control/Temporal/listarTemporal',	
 	id_store:'id_temporal',
 	fields: [
+		{name:'cant_reg', type: 'numeric'},
 		{name:'id_temporal', type: 'numeric'},
 		{name:'id_pregunta', type: 'numeric'},
 		{name:'pregunta', type: 'string'},
