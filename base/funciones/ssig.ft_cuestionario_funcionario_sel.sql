@@ -19,6 +19,7 @@ $body$
  HISTORIAL DE MODIFICACIONES:
 #ISSUE				FECHA				AUTOR				DESCRIPCION
  #0				22-04-2020 06:47:37								Funcion que devuelve conjuntos de registros de las consultas relacionadas con la tabla 'ssig.tcuestionario_funcionario'	
+ #12 			13/05/2020			manuel guerra			agregar campo de nombre de evaluacion
  #
  ***************************************************************************/
 
@@ -112,8 +113,8 @@ BEGIN
     
     /*********************************    
  	#TRANSACCION:  'SSIG_LIST_SEL'
- 	#DESCRIPCION:	Consulta de datos
- 	#AUTOR:		mguerra	
+ 	#DESCRIPCION:	Consulta de dattos
+ 	#AUTOR:		mguerra	 #12
  	#FECHA:		22-04-2020 06:47:37
 	***********************************/
 
@@ -155,12 +156,15 @@ BEGIN
                         person.nombre_completo2::varchar AS desc_person,
                         funcio.codigo,
                         usu.cuenta::varchar,
-                        cuefun.sw_final::varchar	
+                        cuefun.sw_final::varchar,
+                        en.nombre,
+						en.tipo	
                         from ssig.tcuestionario_funcionario cuefun
                         join ssig.tcuestionario cue on cue.id_cuestionario = cuefun.id_cuestionario
                         join orga.tfuncionario funcio on funcio.id_funcionario=cuefun.id_funcionario
                         join segu.vpersona person ON person.id_persona=funcio.id_persona
                         join segu.tusuario usu on usu.id_persona  = person.id_persona
+                        left join ssig.tencuesta en on en.id_encuesta=cue.id_tipo_evalucion
 				        where  '|| v_filtro ||' and ';
 
 			--Definicion de la respuesta
@@ -208,6 +212,7 @@ BEGIN
                         join orga.tfuncionario funcio on funcio.id_funcionario=cuefun.id_funcionario
                         join segu.vpersona person ON person.id_persona=funcio.id_persona
                         join segu.tusuario usu on usu.id_persona  = person.id_persona
+                        left join ssig.tencuesta en on en.id_encuesta=cue.id_tipo_evalucion
 				        where '|| v_filtro ||' and ';
 			--Definicion de la respuesta		    
 			v_consulta:=v_consulta||v_parametros.filtro;

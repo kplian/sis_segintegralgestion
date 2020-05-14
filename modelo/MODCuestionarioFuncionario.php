@@ -8,7 +8,7 @@
  HISTORIAL DE MODIFICACIONES:
 #ISSUE				FECHA				AUTOR				DESCRIPCION
  #0				22-04-2020 06:47:37								CREACION
-
+#12 			13/05/2020			manuel guerra			agregar campo de nombre de evaluacion
 */
 
 class MODCuestionarioFuncionario extends MODbase{
@@ -127,6 +127,9 @@ class MODCuestionarioFuncionario extends MODbase{
 		$this->captura('codigo','varchar');
 		$this->captura('cuenta','varchar');
 		$this->captura('sw_final','varchar');	
+
+		$this->captura('nombre','varchar'); //#12
+		$this->captura('tipo','varchar');//#12
 		//Ejecuta la instruccion
 		$this->armarConsulta();
 		$this->ejecutarConsulta();
