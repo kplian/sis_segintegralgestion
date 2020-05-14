@@ -44,6 +44,9 @@ DECLARE
     v_templa				  varchar;
     v_comill					varchar;
     v_lista						varchar;
+
+    v_encuestado			integer;
+    v_respuesta					integer;
 BEGIN
 
     v_nombre_funcion = 'ssig.ft_cuestionario_ime';
@@ -186,25 +189,24 @@ BEGIN
                                 from orga.tuo_funcionario uo
                                 where uo.id_funcionario = v_id_funcionario;
 
-				--raise exception '%',v_id_uo;
+			--raise exception '%',v_id_uo;
 
-                      			for v_record in (with recursive uo_mas_subordinados(id_uo_hijo,id_uo_padre) as (
-                                       select euo.id_uo_hijo,--id
-                                             id_uo_padre---padre
-                                       from orga.testructura_uo euo
-                                       where euo.id_uo_hijo = v_id_uo and euo.estado_reg = 'activo'
-                                       union
-                                       select e.id_uo_hijo,
-                                              e.id_uo_padre
-                                       from orga.testructura_uo e
-                                       inner join uo_mas_subordinados s on s.id_uo_hijo = e.id_uo_padre
-                                       and e.estado_reg = 'activo'
-                                    )select fun.id_funcionario,
-                                            fun.desc_funcionario1
-                                     from uo_mas_subordinados suo
-                                     inner join orga.vfuncionario_cargo fun on fun.id_uo = suo.id_uo_hijo
-                                                 where (fun.fecha_finalizacion is null or fun.fecha_finalizacion >= '22/12/2019'::date /*fun.fecha_finalizacion >= now()::date*/)
-                                                 and  fun.id_funcionario <> v_id_funcionario)loop
+                      			for v_record in ( with hijo as (select euo.id_uo_hijo,--id
+                                                                 euo.id_uo_padre---padre
+                                                           from orga.testructura_uo euo
+                                                           where euo.id_uo_hijo = v_id_uo and euo.estado_reg = 'activo')
+                                                select  orr.id_uo_hijo,
+                                                        orr.id_uo_padre,
+                                                        fun.id_funcionario,
+                                                        fun.desc_funcionario1,
+                                                        uo.nombre_unidad,
+                                                        ni.numero_nivel
+                                                from hijo hr
+                                                inner join orga.testructura_uo orr on orr.id_uo_hijo = hr.id_uo_padre
+                                                inner join orga.tuo uo on uo.id_uo = hr.id_uo_padre
+                                                inner join orga.vfuncionario_cargo fun on fun.id_uo = orr.id_uo_hijo
+                                                inner join orga.tnivel_organizacional ni on ni.id_nivel_organizacional = uo.id_nivel_organizacional
+                                                where (fun.fecha_finalizacion is null or fun.fecha_finalizacion >= now()))loop
 
                                        insert into ssig.tevaluados(id_usuario_reg,
                                                           id_usuario_mod,
@@ -270,12 +272,27 @@ BEGIN
                                 where uo.id_funcionario = v_id_funcionario;
 
 
-                      			for v_record in (select fun.id_funcionario,
-                                				        fun.desc_funcionario1
-                                                 from orga.testructura_uo euo
-                                                 inner join orga.vfuncionario_cargo fun on fun.id_uo = euo.id_uo_padre
-                                                 where euo.id_uo_hijo = v_id_uo and euo.estado_reg = 'activo' and
-                                                 (fun.fecha_finalizacion is null or fun.fecha_finalizacion >= now()::date))loop
+								--raise exception '%',v_id_uo;
+
+                      			for v_record in (with recursive uo_mas_subordinados(id_uo_hijo,id_uo_padre) as (
+                                       select euo.id_uo_hijo,--id
+                                             id_uo_padre---padre
+                                       from orga.testructura_uo euo
+                                       where euo.id_uo_hijo = v_id_uo and euo.estado_reg = 'activo'
+                                       union
+                                       select e.id_uo_hijo,
+                                              e.id_uo_padre
+                                       from orga.testructura_uo e
+                                       inner join uo_mas_subordinados s on s.id_uo_hijo = e.id_uo_padre
+                                       and e.estado_reg = 'activo'
+                                    )select fun.id_funcionario,
+                                            fun.desc_funcionario1
+                                     from uo_mas_subordinados suo
+                                     inner join orga.tuo ou on ou.id_uo = suo.id_uo_hijo
+                                     inner join orga.vfuncionario_cargo fun on fun.id_uo = suo.id_uo_hijo
+                                     inner join orga.tnivel_organizacional ni on ni.id_nivel_organizacional = ou.id_nivel_organizacional
+                                     where (fun.fecha_finalizacion is null or fun.fecha_finalizacion >= now()::date /*fun.fecha_finalizacion >= now()::date*/)
+                                     and ni.numero_nivel = 4 and fun.id_funcionario <> v_id_funcionario)loop
 
                                        insert into ssig.tevaluados(id_usuario_reg,
                                                           id_usuario_mod,
@@ -538,23 +555,22 @@ BEGIN
                                 where uo.id_funcionario = v_id_funcionario;
 
 
-                      			for v_record in (with recursive uo_mas_subordinados(id_uo_hijo,id_uo_padre) as (
-                                       select euo.id_uo_hijo,--id
-                                             id_uo_padre---padre
-                                       from orga.testructura_uo euo
-                                       where euo.id_uo_hijo = v_id_uo and euo.estado_reg = 'activo'
-                                       union
-                                       select e.id_uo_hijo,
-                                              e.id_uo_padre
-                                       from orga.testructura_uo e
-                                       inner join uo_mas_subordinados s on s.id_uo_hijo = e.id_uo_padre
-                                       and e.estado_reg = 'activo'
-                                    )select fun.id_funcionario,
-                                            fun.desc_funcionario1
-                                     from uo_mas_subordinados suo
-                                     inner join orga.vfuncionario_cargo fun on fun.id_uo = suo.id_uo_hijo
-                                                 where (fun.fecha_finalizacion is null or fun.fecha_finalizacion >= now()::date)
-                                                 and  fun.id_funcionario <> v_id_funcionario)loop
+                      			for v_record in ( with hijo as (select euo.id_uo_hijo,--id
+                                                                 euo.id_uo_padre---padre
+                                                           from orga.testructura_uo euo
+                                                           where euo.id_uo_hijo = v_id_uo and euo.estado_reg = 'activo')
+                                                select  orr.id_uo_hijo,
+                                                        orr.id_uo_padre,
+                                                        fun.id_funcionario,
+                                                        fun.desc_funcionario1,
+                                                        uo.nombre_unidad,
+                                                        ni.numero_nivel
+                                                from hijo hr
+                                                inner join orga.testructura_uo orr on orr.id_uo_hijo = hr.id_uo_padre
+                                                inner join orga.tuo uo on uo.id_uo = hr.id_uo_padre
+                                                inner join orga.vfuncionario_cargo fun on fun.id_uo = orr.id_uo_hijo
+                                                inner join orga.tnivel_organizacional ni on ni.id_nivel_organizacional = uo.id_nivel_organizacional
+                                                where (fun.fecha_finalizacion is null or fun.fecha_finalizacion >= now()))loop
 
                                        insert into ssig.tevaluados(id_usuario_reg,
                                                           id_usuario_mod,
@@ -620,12 +636,25 @@ BEGIN
                                 where uo.id_funcionario = v_id_funcionario;
 
 
-                      			for v_record in (select fun.id_funcionario,
-                                				        fun.desc_funcionario1
-                                                 from orga.testructura_uo euo
-                                                 inner join orga.vfuncionario_cargo fun on fun.id_uo = euo.id_uo_padre
-                                                 where euo.id_uo_hijo = v_id_uo and euo.estado_reg = 'activo' and
-                                                 (fun.fecha_finalizacion is null or fun.fecha_finalizacion >= now()::date))loop
+                      			for v_record in (with recursive uo_mas_subordinados(id_uo_hijo,id_uo_padre) as (
+                                       select euo.id_uo_hijo,--id
+                                             id_uo_padre---padre
+                                       from orga.testructura_uo euo
+                                       where euo.id_uo_hijo = v_id_uo and euo.estado_reg = 'activo'
+                                       union
+                                       select e.id_uo_hijo,
+                                              e.id_uo_padre
+                                       from orga.testructura_uo e
+                                       inner join uo_mas_subordinados s on s.id_uo_hijo = e.id_uo_padre
+                                       and e.estado_reg = 'activo'
+                                    )select fun.id_funcionario,
+                                            fun.desc_funcionario1
+                                     from uo_mas_subordinados suo
+                                     inner join orga.tuo ou on ou.id_uo = suo.id_uo_hijo
+                                     inner join orga.vfuncionario_cargo fun on fun.id_uo = suo.id_uo_hijo
+                                     inner join orga.tnivel_organizacional ni on ni.id_nivel_organizacional = ou.id_nivel_organizacional
+                                     where (fun.fecha_finalizacion is null or fun.fecha_finalizacion >= now()::date /*fun.fecha_finalizacion >= now()::date*/)
+                                     and ni.numero_nivel = 4 and fun.id_funcionario <> v_id_funcionario)loop
 
                                        insert into ssig.tevaluados(id_usuario_reg,
                                                           id_usuario_mod,
@@ -837,7 +866,7 @@ BEGIN
     .contenedor_texto {
       width: 49%;
     position: absolute;
-    top: 228px;
+    top: 204px;
     left: 130px;
     padding: 5px;
     text-align: justify;
@@ -847,15 +876,17 @@ BEGIN
     <div id="contenedor">
         <div class="contenedor_imagen">
 		<img
-		src="https://i.ibb.co/LkY5gbD/fondo-presentacion-03.jpg"
+		src="/var/www/html/etrtest/sis_segintegralgestion/vista/ImagenesIndicador/fondo-presentacion-01.jpg"
 		style="width:100%;z-index:1" >
 		</div>
         <div class="contenedor_texto">
             <b>Estimados y estimadas</b> <br>
 			<br>
             Les damos la bienvenida a la Fase Piloto del nuevo Sistema de Evaluación de Desempeño 360 de ENDE Transmisión.
-            Agradecemos de antemano su valiosa participación en este proceso de mejora.
-            La evaluación se encuentra en el <b>ENDESIS</b> en el siguiente enlace: <br>
+            Agradecemos de antemano su valiosa participación en este proceso de mejora
+            (En caso de que requiera, puede acceder al siguiente <a href="https://www.youtube.com/watch?v=IQgIstt6uZU&feature=youtu.be" style=" padding-left: 7px;">Video Tutorial</a>).
+            <p> La evaluación se encuentra en el  <b>ENDESIS</b>  en el siguiente enlace:</p>
+            <br>
 		</div>
     </div>';
 
@@ -901,7 +932,7 @@ BEGIN
                   '',--par_parametros
                   item.id_usuario::INTEGER,--par_id_usuario_alarma
                   'Evaluación de Desempeño 360',--par_titulo correo
-                  'miguel.ale19934@gmail.com',--par_correos
+                  v_correo,--par_correos
                   '',--par_documentos
                   NULL,--p_id_proceso_wf
                   NULL,--p_id_estado_wf
@@ -1022,17 +1053,20 @@ BEGIN
     	begin
 		--	raise exception 'error %',v_parametros.id_cuestionario;
 
-
-
-
-           if (select count(ev.id_funcionario)
+    select count(ev.id_funcionario)into v_encuestado
               from ssig.tcuestionario cu
               inner join ssig.tcuestionario_funcionario cud on cud.id_cuestionario = cu.id_cuestionario
               inner join ssig.tevaluados ev on ev.id_cuestionario_funcionario = cud.id_cuestionario_funcionario
               inner join orga.vfuncionario fu on fu.id_funcionario = ev.id_funcionario
-              where cu.id_cuestionario = v_parametros.id_cuestionario) <> (select count(re.id_func_evaluado)
-                                                                          from ssig.trespuestas re
-                                                                          where re.id_cuestionario = v_parametros.id_cuestionario)then
+              where cu.id_cuestionario = v_parametros.id_cuestionario;
+
+    select count(DISTINCT re.id_func_evaluado) into v_respuesta
+    from ssig.trespuestas re
+    where re.id_cuestionario = v_parametros.id_cuestionario;
+
+
+    --raise exception 'e % r %',v_encuestado,v_respuesta;
+           if (v_encuestado <> v_respuesta)then
 
                       select pxp.list( fu.desc_funcionario1) into v_lista
                       from ssig.tcuestionario cu
@@ -1049,7 +1083,7 @@ BEGIN
             end if;
 
 
-		--	raise exception 'error %',v_parametros.id_cuestionario;
+			--raise exception 'error %',v_parametros.id_cuestionario;
         	update ssig.tcuestionario_funcionario
             set estado='finalizado',sw_final='si'
             where id_cuestionario=v_parametros.id_cuestionario

@@ -19,11 +19,11 @@ class ACTEvaluados extends ACTbase{
         if($this->objParam->getParametro('id_cuestionario_funcionario') != '') {
             $this->objParam->addFiltro("evs.id_cuestionario_funcionario = " .$this->objParam->getParametro('id_cuestionario_funcionario'));
         }
-            $this->objParam->addFiltro("evs.id_cuestionario_funcionario = " .
+            /*$this->objParam->addFiltro("evs.id_cuestionario_funcionario = " .
                 $this->objParam->getParametro('id_cuestionario_funcionario')."and evs.id_funcionario  not in (select re.id_func_evaluado 
                           																				  from ssig.trespuestas re       
                                                                                                           inner join ssig.tcuestionario_funcionario fu on fu.id_cuestionario = re.id_cuestionario                                                                                      
-                                                                                                          where fu.id_cuestionario_funcionario = ".$this->objParam->getParametro('id_cuestionario_funcionario')." )");
+                                                                                                          where fu.id_cuestionario_funcionario = ".$this->objParam->getParametro('id_cuestionario_funcionario')." )");*/
 
 		if($this->objParam->getParametro('tipoReporte')=='excel_grid' || $this->objParam->getParametro('tipoReporte')=='pdf_grid'){
 			$this->objReporte = new Reporte($this->objParam,$this);
