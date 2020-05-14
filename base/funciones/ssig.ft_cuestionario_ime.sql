@@ -1,3 +1,5 @@
+--------------- SQL ---------------
+
 CREATE OR REPLACE FUNCTION ssig.ft_cuestionario_ime (
   p_administrador integer,
   p_id_usuario integer,
@@ -1076,7 +1078,7 @@ BEGIN
                 from orga.vfuncionario fu
                 where fu.id_funcionario = any(v_id_evaluador);
 
-                      raise exception 'Aun fueron evaluar: %',v_lista_negra;
+                      raise exception 'Aun le faltan evaluar a: %',v_lista_negra;
             end if;
 
 
@@ -1121,6 +1123,3 @@ CALLED ON NULL INPUT
 SECURITY INVOKER
 PARALLEL UNSAFE
 COST 100;
-
-ALTER FUNCTION ssig.ft_cuestionario_ime (p_administrador integer, p_id_usuario integer, p_tabla varchar, p_transaccion varchar)
-  OWNER TO postgres;
