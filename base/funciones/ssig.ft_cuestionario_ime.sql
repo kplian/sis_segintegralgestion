@@ -41,12 +41,10 @@ DECLARE
     v_record					record;
     v_id_cuestionario_funcionario integer;
     v_recor_evaluador			  record;
-    v_templa				  varchar;
-    v_comill					varchar;
-    v_lista						varchar;
-
-    v_encuestado			integer;
-    v_respuesta					integer;
+    v_templa				      varchar;
+    v_record_datos				  record;
+    v_id_evaluador 				  integer[];
+    v_lista_negra				  varchar;
 BEGIN
 
     v_nombre_funcion = 'ssig.ft_cuestionario_ime';
@@ -1051,39 +1049,37 @@ BEGIN
 	ELSIF(p_transaccion='SSIG_FINCUE_IME')then
 
     	begin
-		--	raise exception 'error %',v_parametros.id_cuestionario;
+		  v_id_evaluador = null;
+          for v_record_datos in ( select 	cu.id_funcionario as id_evaluador,
+        									ev.id_funcionario as id_evaluado
+                                from ssig.tcuestionario_funcionario cu
+                                inner join ssig.tevaluados ev on ev.id_cuestionario_funcionario = cu.id_cuestionario_funcionario
+                                where cu.id_cuestionario = v_parametros.id_cuestionario and cu.id_funcionario = (SELECT funcio.id_funcionario
+                                                                                                                FROM orga.tfuncionario funcio
+                                                                                                                JOIN segu.vpersona person ON funcio.id_persona = person.id_persona
+                                                                                                                JOIN segu.tusuario usu ON person.id_persona=usu.id_persona
+                                                                                                                WHERE usu.id_usuario= p_id_usuario))loop
 
-    select count(ev.id_funcionario)into v_encuestado
-              from ssig.tcuestionario cu
-              inner join ssig.tcuestionario_funcionario cud on cud.id_cuestionario = cu.id_cuestionario
-              inner join ssig.tevaluados ev on ev.id_cuestionario_funcionario = cud.id_cuestionario_funcionario
-              inner join orga.vfuncionario fu on fu.id_funcionario = ev.id_funcionario
-              where cu.id_cuestionario = v_parametros.id_cuestionario;
+        			if not exists ( select distinct re.id_func_evaluado
+                                from ssig.trespuestas re
+                                where re.id_cuestionario = v_parametros.id_cuestionario and re.id_func_evaluado = v_record_datos.id_evaluado
+                                     and re.id_funcionario = v_record_datos.id_evaluador)then
 
-    select count(DISTINCT re.id_func_evaluado) into v_respuesta
-    from ssig.trespuestas re
-    where re.id_cuestionario = v_parametros.id_cuestionario;
+                                     v_id_evaluador = array_append(v_id_evaluador, v_record_datos.id_evaluado);
+                    end if;
 
+        	end loop;
 
-    --raise exception 'e % r %',v_encuestado,v_respuesta;
-           if (v_encuestado <> v_respuesta)then
+            if array_length(v_id_evaluador, 1) != 0 then
 
-                      select pxp.list( fu.desc_funcionario1) into v_lista
-                      from ssig.tcuestionario cu
-                      inner join ssig.tcuestionario_funcionario cud on cud.id_cuestionario = cu.id_cuestionario
-                      inner join ssig.tevaluados ev on ev.id_cuestionario_funcionario = cud.id_cuestionario_funcionario
-                      inner join orga.vfuncionario fu on fu.id_funcionario = ev.id_funcionario
-                      where cu.id_cuestionario = v_parametros.id_cuestionario and ev.id_funcionario not in (select re.id_func_evaluado
-                                                  								from ssig.trespuestas re
-                                                                                where re.id_cuestionario = v_parametros.id_cuestionario);
+            	select pxp.list(initcap(fu.desc_funcionario1)) into v_lista_negra
+                from orga.vfuncionario fu
+                where fu.id_funcionario = any(v_id_evaluador);
 
-                      raise exception 'Aun no evaluado los funcionarios %',v_lista;
-
-
+                      raise exception 'Aun fueron evaluar: %',v_lista_negra;
             end if;
 
 
-			--raise exception 'error %',v_parametros.id_cuestionario;
         	update ssig.tcuestionario_funcionario
             set estado='finalizado',sw_final='si'
             where id_cuestionario=v_parametros.id_cuestionario
