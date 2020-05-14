@@ -68,9 +68,15 @@ Phx.vista.Temporal=Ext.extend(Phx.gridInterfaz,{
 	}),
 	//
 	CargarEncabezado:function(){
-		var encab='<br><div style="margin: 0 auto;  width: 400px; padding: 1em; border: 1px solid #CCC; border-radius: 1em;">';
-		encab=encab+'<div> <label for="name"><b>CUESTIONARIO &nbsp;:</b></label> <label for="name">'+v_maestro.data.cuestionario+'</label> </div>';			
-		encab=encab+'<div> <label for="name"><b>FUNCIONARIO &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :</b></label> <label for="name">'+v_maestro.data.usuario+'</label> </div>  </div><br>';			    			    	
+		var encab='<br><div style="margin: 0 auto;  width: 620px; padding: 1em; border: 1px solid #CCC; border-radius: 1em;">';
+		//encab=encab+'<div> <label for="name"><b>FUNCIONARIO EVALUADOR&nbsp;:</b></label> <label for="name">'+v_maestro.data.usuario+'</label> </div>';			
+		encab=encab+'<div> <label for="name"><p><span style="color: #ff0000;"><em><strong><label for="name">Notas aclaratorias sobre comportamiento</label></strong></em></span></p></label> </div>';			
+		encab=encab+'<div> <label for="name">(1) Excelente: Desempeño que es superior y/o sobresaliente.</label> </div>';			
+		encab=encab+'<div> <label for="name">(2) Destacable: Desempeño que en el cumplimiento de actividades y funciones demuestra una notable dedicación y cumplimiento.</label> </div>';
+		encab=encab+'<div> <label for="name">(3) Acorde a la posicion: Cumplimiento acorde a las exigencias del puesto.</label> </div>';
+		encab=encab+'<div> <label for="name">(4) En desarrollo: Cumplimiento por debajo de los requerido, pero que denota empeño y  muestra un avance positivo.</label> </div>';
+		encab=encab+'<div> <label for="name">(5) Por desarrollar: Cumplimiento que está por debajo de lo esperado para el cargo.</label> </div>';		
+		encab=encab+'<div> </div><br>';			    			    	
 		document.getElementById("encabezado").innerHTML = encab;		
 	},
 	//
@@ -181,7 +187,7 @@ Phx.vista.Temporal=Ext.extend(Phx.gridInterfaz,{
 					Ext.apply(data[i],this.argumentExtraSubmit);																
 				}		
 				console.log(i,'-',count);	
-				if(i==count){
+				//if(i==count){
 					Phx.CP.loadingShow();
 					Ext.Ajax.request({
 						url:this.ActSave,
@@ -197,9 +203,9 @@ Phx.vista.Temporal=Ext.extend(Phx.gridInterfaz,{
 						timeout:this.timeout,
 						scope:this
 					});
-				}else{
+				/*}else{
 					alert('Aun le faltan respuestas por responder, favor completarlo');
-				}
+				}*/
 			}
 		}
 	},
@@ -428,7 +434,7 @@ Phx.vista.Temporal=Ext.extend(Phx.gridInterfaz,{
 	cmbGestion: new Ext.form.ComboBox({
 		fieldLabel: 'Funcionario',
 		allowBlank: true,
-		emptyText: 'Seleccione funcionario...',
+		emptyText: 'Seleccione funcionario que sera evaluado...',
 		store: new Ext.data.JsonStore(
 		{
 			url: '../../sis_segintegralgestion/control/Evaluados/listarEvaluados',

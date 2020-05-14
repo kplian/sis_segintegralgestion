@@ -92,7 +92,7 @@ header("content-type: text/javascript; charset=UTF-8");
                     'Cuestionario-Funcionario',
                     {
                         modal: true,
-                        width: '75%',
+                        width: '85%',
                         frame: true,
                         border: true
                     }, 
