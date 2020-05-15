@@ -602,7 +602,9 @@ BEGIN
 	elsif(p_transaccion='SSIG_REEN_SEL')then
 
     	begin
-			v_consulta:='with recursive nodes(id_encuesta, id_encuesta_padre, nombre,grupo,categoria,
+
+
+			v_consulta:= 'with recursive nodes(id_encuesta, id_encuesta_padre, nombre,grupo,categoria,
                               pregunta,peso_categoria) as
                             (
                                 select padre.id_encuesta,
@@ -656,11 +658,12 @@ BEGIN
                                      from ssig.tencuesta enc
                                      where enc.id_encuesta = nodes.id_encuesta_padre
                                    ) as nombre_cat,
-                                   fun.desc_funcionario1 as evaluador,
-                                   ger.nombre_unidad as gerencia,
-                                   func.desc_funcionario1 as evaluado,
+                                   ger.codigo as gerencia,
+                                   fun.desc_funcionario1 as evaluado,
+                                   func.desc_funcionario1 as evaluador,
                                    func.descripcion_cargo,
-                                   sum(CASE
+
+                                   COALESCE(sum(CASE
                                          WHEN (r.respuesta = 1) THEN (
                                                                        select enc.peso_categoria * 1
                                                                        from ssig.tencuesta enc
@@ -691,25 +694,24 @@ BEGIN
                                                                        where enc.id_encuesta =
                                                                          nodes.id_encuesta_padre
                                    )
-                                       END) as resp
+                                       END),0) as resp
                             from nodes
                                  left join ssig.trespuestas r on r.id_pregunta = nodes.id_encuesta
-                                 inner join orga.vfuncionario fun on fun.id_funcionario = r.id_funcionario
-                                 inner join orga.vfuncionario_cargo func on func.id_funcionario =
-                                   r.id_func_evaluado
+                                 inner join orga.vfuncionario_cargo func on func.id_funcionario =  r.id_funcionario  --r.id_func_evaluado
+                                 inner join orga.vfuncionario fun on fun.id_funcionario = r.id_func_evaluado
                                  inner join orga.tuo ger on ger.id_uo = orga.f_get_uo_gerencia(func.id_uo,
                                    NULL::integer, NULL::date) and (func.fecha_finalizacion is null or
                                    func.fecha_finalizacion >= now()::date)
                             where nodes.pregunta = ''si''
                             group by nodes.id_encuesta_padre,
-                                     fun.desc_funcionario1,
-                                     func.descripcion_cargo,
-                                     ger.nombre_unidad,
-                                     evaluador,
+                            ger.codigo,
+                            		 evaluador,
                                      evaluado,
+                                     func.descripcion_cargo,
                                      pesoxpregunta,
                                      titulo,
-                                     grupo';
+                                     grupo
+                            order by gerencia, evaluado,evaluador';
 
 			--Devuelve la respuesta
 			return v_consulta;
