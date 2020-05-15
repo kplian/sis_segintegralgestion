@@ -21,6 +21,8 @@ header("content-type: text/javascript; charset=UTF-8");
     var v_id_cuestionario_funcionario=0;
     Phx.vista.Temporal=Ext.extend(Phx.gridInterfaz,{
 
+
+	
             constructor:function(config){
                 this.maestro=config.maestro;
                 this.initButtons = [this.contenidoImagen,this.cmbGestion];
@@ -172,10 +174,12 @@ header("content-type: text/javascript; charset=UTF-8");
                 var total=this.store.totalLength;
                 var count=0;
                 for(var j=0;j<total;j++){
-                    if(this.store.data.items[j].data.sw_nivel==0){
+                    if(this.store.data.items[j].data.tipo=='Selección' || this.store.data.items[j].data.tipo=='Texto'){
                         count++;
                     }
+                    console.log(this.store.data.items[j].data);
                 }
+                
                 var filas=this.store.getModifiedRecords();
                 if(filas.length>0){
                     if(confirm("Está seguro de guardar los cambios?")){
@@ -187,7 +191,7 @@ header("content-type: text/javascript; charset=UTF-8");
                             Ext.apply(data[i],this.argumentExtraSubmit);
                         }
                         console.log(i,'-',count);
-                        //if(i==count){
+                        if(i==count){
                         Phx.CP.loadingShow();
                         Ext.Ajax.request({
                             url:this.ActSave,
@@ -203,9 +207,9 @@ header("content-type: text/javascript; charset=UTF-8");
                             timeout:this.timeout,
                             scope:this
                         });
-                        /*}else{
+                        }else{
                             alert('Aun le faltan respuestas por responder, favor completarlo');
-                        }*/
+                        }
                     }
                 }
             },
@@ -461,6 +465,7 @@ header("content-type: text/javascript; charset=UTF-8");
                 listWidth: '280',
                 width: 200
             }),
+
 
 
         }
