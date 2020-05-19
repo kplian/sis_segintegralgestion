@@ -320,7 +320,10 @@ class RReporteCuestionario{
                                 if ($numero == count($resul)) {
                                     $fin = $fil;
                                     $ini = $fin + 1 - count($resul);
-                                    $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fil + 1, "=SUM(" . $this->equivalencias[$columna] . "$ini:" . $this->equivalencias[$columna] . "$fin)");
+                                    $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fil + 1, "=SUM(" . $this->equivalencias[$columna] . "$ini:" . $this->equivalencias[$columna] . "$fin)/".count($resul)."");
+                                    $ua = $fil + 1;
+                                    $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[1] . $ua.":" . $this->equivalencias[$this->list-1] . $ua)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+
                                 }
                             }
                             foreach ($key4 as $indice => $key5) {
