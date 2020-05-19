@@ -150,11 +150,12 @@ class RReporteCuestionario{
                 )
             ),
         );
+        $datos = $this->objParam->getParametro('datos');
+
+        if (count($datos) != 0) {
 
         //modificacionw
         $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(1,3,$this->objParam->getParametro('datos')[0]['titulo']);
-
-
         $this->docexcel->getActiveSheet()->getColumnDimension('B')->setWidth(50);
         $this->docexcel->getActiveSheet()->getColumnDimension('C')->setWidth(50);
         $this->docexcel->getActiveSheet()->getColumnDimension('D')->setWidth(10);
@@ -170,36 +171,39 @@ class RReporteCuestionario{
         $this->docexcel->getActiveSheet()->setCellValue('D5','Ger.');
         $this->docexcel->getActiveSheet()->mergeCells('D5:D6');
 
-        $datos = $this->objParam->getParametro('datos');
 
-        foreach ($datos as $value){
-            if (!array_key_exists($value['grupo'], $this->titulos) ||
-                !array_key_exists($value['nombre_cat'], $this->titulos[$value['grupo']])) {
-                $this->titulos[$value['grupo']][$value['nombre_cat']] = 1;
-            } else {
-                $this->titulos[$value['grupo']][$value['nombre_cat']]++;
-            }
-        }
-        $columnaSub = 4;
-        $columna = 4;
-        foreach ($this->titulos as $value => $key){
-            $resultado = array_merge($key, array('Promedio'=>''));
-            $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columnaSub ,5, $value);
-            $this->docexcel->getActiveSheet()->mergeCells($this->equivalencias[$columnaSub]."5:".$this->equivalencias[$columnaSub + count($resultado) - 1]."5");
-            $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[$columnaSub]."5:".$this->equivalencias[$columnaSub + count($resultado) - 1]."6")->applyFromArray($styleCatalogo);
 
-            foreach ($resultado as $item => $key2){
-                $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columnaSub,6, $item);
-                $this->docexcel->getActiveSheet()->getColumnDimension($this->equivalencias[$columnaSub])->setWidth(15);
-                $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[4] . "6:" . $this->equivalencias[$columnaSub] . "6")->getAlignment()->setWrapText(true);
-                $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[4]."6:".$this->equivalencias[$columnaSub]."6")->applyFromArray($styleCatalogo);
-                $columnaSub ++;
-                $this->list= $columnaSub ;
+            foreach ($datos as $value) {
+                if (!array_key_exists($value['grupo'], $this->titulos) ||
+                    !array_key_exists($value['nombre_cat'], $this->titulos[$value['grupo']])) {
+                    $this->titulos[$value['grupo']][$value['nombre_cat']] = 1;
+                } else {
+                    $this->titulos[$value['grupo']][$value['nombre_cat']]++;
+                }
             }
-            $columna ++;
+            $columnaSub = 4;
+            $columna = 4;
+            foreach ($this->titulos as $value => $key) {
+                $resultado = array_merge($key, array('Promedio' => ''));
+                $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columnaSub, 5, $value);
+                $this->docexcel->getActiveSheet()->mergeCells($this->equivalencias[$columnaSub] . "5:" . $this->equivalencias[$columnaSub + count($resultado) - 1] . "5");
+                $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[$columnaSub] . "5:" . $this->equivalencias[$columnaSub + count($resultado) - 1] . "6")->applyFromArray($styleCatalogo);
+
+                foreach ($resultado as $item => $key2) {
+                    $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columnaSub, 6, $item);
+                    $this->docexcel->getActiveSheet()->getColumnDimension($this->equivalencias[$columnaSub])->setWidth(15);
+                    $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[4] . "6:" . $this->equivalencias[$columnaSub] . "6")->getAlignment()->setWrapText(true);
+                    $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[4] . "6:" . $this->equivalencias[$columnaSub] . "6")->applyFromArray($styleCatalogo);
+                    $columnaSub++;
+                    $this->list = $columnaSub;
+                }
+                $columna++;
+            }
+            $this->docexcel->getActiveSheet()->getStyle("B3:" . $this->equivalencias[$this->list - 1] . "4")->applyFromArray($styleTitulos);
+            $this->docexcel->getActiveSheet()->mergeCells("B3:" . $this->equivalencias[$this->list - 1] . "4");
+        }else{
+            $this->docexcel->getActiveSheet()->setCellValue('B5','La evaluacion no tiene Registros.');
         }
-        $this->docexcel->getActiveSheet()->getStyle("B3:".$this->equivalencias[$this->list - 1 ]."4")->applyFromArray($styleTitulos);
-        $this->docexcel->getActiveSheet()->mergeCells("B3:".$this->equivalencias[$this->list - 1]."4");
     }
     function generarDatos(){
         $this->imprimeCabecera();
@@ -228,196 +232,116 @@ class RReporteCuestionario{
                 )
             ));
         $datos = $this->objParam->getParametro('datos');
-        foreach ($datos as $value){
-            if (!array_key_exists($value['evaluado'],$this->funcinario)||
-                !array_key_exists($value['evaluador'],$this->funcinario[$value['evaluado']])){
-                $this->funcinario[$value['evaluado']][$value['evaluador']][$value['descripcion_cargo']][$value['gerencia']] = 1;
-            }else{
-                $this->funcinario[$value['evaluado']][$value['evaluador']][$value['descripcion_cargo']][$value['gerencia']] ++;
-            }
-        }
-        // content
-        foreach ($datos as $value){
-            if (!array_key_exists($value['evaluado'],$this->content)||
-                !array_key_exists($value['evaluador'],$this->content[$value['evaluado']]) ||
-                !array_key_exists($value['grupo'],$this->content[$value['evaluado']][$value['evaluador']]) ||
-                !array_key_exists($value['nombre_cat'],$this->content[$value['evaluado']][$value['evaluador']][$value['grupo']]) ||
-                !array_key_exists($value['resp'],$this->content[$value['evaluado']][$value['evaluador']][$value['grupo']][$value['nombre_cat']])
-            ){
-                $this->content[$value['evaluado']][$value['evaluador']][$value['grupo']][$value['nombre_cat']][$value['resp']] = 1;
-            }else{
-                $this->content[$value['evaluado']][$value['evaluador']][$value['grupo']][$value['nombre_cat']][$value['resp']] ++;
-            }
-        }
-        $fila = 7;
-        $eva = '';
 
-        foreach ($this->funcinario as $evaluado => $key) {
+        if (count($datos) != 0) {
+
+            foreach ($datos as $value) {
+                if (!array_key_exists($value['evaluado'], $this->funcinario) ||
+                    !array_key_exists($value['evaluador'], $this->funcinario[$value['evaluado']])) {
+                    $this->funcinario[$value['evaluado']][$value['evaluador']][$value['descripcion_cargo']][$value['gerencia']] = 1;
+                } else {
+                    $this->funcinario[$value['evaluado']][$value['evaluador']][$value['descripcion_cargo']][$value['gerencia']]++;
+                }
+            }
+            // content
+            foreach ($datos as $value) {
+                if (!array_key_exists($value['evaluado'], $this->content) ||
+                    !array_key_exists($value['evaluador'], $this->content[$value['evaluado']]) ||
+                    !array_key_exists($value['grupo'], $this->content[$value['evaluado']][$value['evaluador']]) ||
+                    !array_key_exists($value['nombre_cat'], $this->content[$value['evaluado']][$value['evaluador']][$value['grupo']]) ||
+                    !array_key_exists($value['resp'], $this->content[$value['evaluado']][$value['evaluador']][$value['grupo']][$value['nombre_cat']])
+                ) {
+                    $this->content[$value['evaluado']][$value['evaluador']][$value['grupo']][$value['nombre_cat']][$value['resp']] = 1;
+                } else {
+                    $this->content[$value['evaluado']][$value['evaluador']][$value['grupo']][$value['nombre_cat']][$value['resp']]++;
+                }
+            }
+            $fila = 7;
+            $eva = '';
+
+            foreach ($this->funcinario as $evaluado => $key) {
                 $resultado = $key;
-                 $numero = 1;
-            foreach ($resultado as $funcionario => $key2){
-                if ($this->objParam->getParametro('datos')[0]['tipo'] != 'auto_evaluacion') {
-                    if ($eva != $evaluado) {
-                        if ($eva != '') {
-                            $fila = $fila + 2;
+                $numero = 1;
+                foreach ($resultado as $funcionario => $key2) {
+                    if ($this->objParam->getParametro('datos')[0]['tipo'] != 'auto_evaluacion') {
+                        if ($eva != $evaluado) {
+                            if ($eva != '') {
+                                $fila = $fila + 2;
+                            }
+                            $this->imprimeEvaludaro($fila, $evaluado);
+                            $eva = $evaluado;
+                            $fila++;
                         }
-                        $this->imprimeEvaludaro($fila, $evaluado);
-                        $eva = $evaluado;
-                        $fila++;
                     }
-                }
-                $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(1, $fila, $funcionario);
-                if ($this->objParam->getParametro('datos')[0]['tipo'] != 'auto_evaluacion') {
-                    if ($numero == count($resultado)) {
-                        $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(1, $fila + 1, 'TOTALES  PROMEDIO POR SUBDIMENSIONES');
-                        $gg = $fila + 1;
-                        $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[1] . $gg.":" . $this->equivalencias[$this->list-1] . $gg)->applyFromArray($styleTitulos2);
+                    $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(1, $fila, $funcionario);
+                    if ($this->objParam->getParametro('datos')[0]['tipo'] != 'auto_evaluacion') {
+                        if ($numero == count($resultado)) {
+                            $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(1, $fila + 1, 'TOTALES  PROMEDIO POR SUBDIMENSIONES');
+                            $gg = $fila + 1;
+                            $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[1] . $gg . ":" . $this->equivalencias[$this->list - 1] . $gg)->applyFromArray($styleTitulos2);
 
+                        }
                     }
-                }
-                $numero ++;
-                foreach ($key2 as $cargo => $key3){
-                     $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(2, $fila, $cargo);
-                     foreach ($key3 as $ger => $ky4){
-                         $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(3, $fila, $ger);
-                     }
-                }
-                $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[1] . $fila.":" . $this->equivalencias[$this->list-1] . $fila)->applyFromArray($styleTitulos);
+                    $numero++;
+                    foreach ($key2 as $cargo => $key3) {
+                        $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(2, $fila, $cargo);
+                        foreach ($key3 as $ger => $ky4) {
+                            $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(3, $fila, $ger);
+                        }
+                    }
+                    $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[1] . $fila . ":" . $this->equivalencias[$this->list - 1] . $fila)->applyFromArray($styleTitulos);
 
-                $fila ++;
+                    $fila++;
+                }
             }
-        }
-        $fil = 7;
-        $ev = '';
-        foreach ($this->content as $evaluado => $key){
-            $resul = $key;
-            $numero = 1;
-            if ($this->objParam->getParametro('datos')[0]['tipo'] != 'auto_evaluacion') {
-                if ($ev != $evaluado) {
-                    if ($ev != '') {
-                        $fil = $fil + 2;
+            $fil = 7;
+            $ev = '';
+            foreach ($this->content as $evaluado => $key) {
+                $resul = $key;
+                $numero = 1;
+                if ($this->objParam->getParametro('datos')[0]['tipo'] != 'auto_evaluacion') {
+                    if ($ev != $evaluado) {
+                        if ($ev != '') {
+                            $fil = $fil + 2;
+                        }
+                        $ev = $evaluado;
+                        $fil++;
                     }
-                    $ev = $evaluado;
+                }
+                foreach ($key as $evaluador => $key2) {
+                    $columna = 4;
+                    foreach ($key2 as $grupo => $key3) {
+                        $contar = count($key3);
+                        $array['promedio'] = array();
+                        $resultado = array_merge($key3, array('Promedio' => $array));
+                        $promedio = 0;
+                        foreach ($resultado as $catalogo => $key4) {
+                            if ($this->objParam->getParametro('datos')[0]['tipo'] != 'auto_evaluacion') {
+                                if ($numero == count($resul)) {
+                                    $fin = $fil;
+                                    $ini = $fin + 1 - count($resul);
+                                    $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fil + 1, "=SUM(" . $this->equivalencias[$columna] . "$ini:" . $this->equivalencias[$columna] . "$fin)");
+                                }
+                            }
+                            foreach ($key4 as $indice => $key5) {
+                                if ($indice == 'promedio') {
+                                    $indice = $promedio / $contar; // $promedio;
+                                    $promedio = 0;
+                                }
+                                $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fil, $indice);
+                                if ($indice != 'promedio') {
+                                    $promedio = $indice + $promedio;
+                                }
+                            }
+                            $columna++;
+                        }
+                    }
+
+                    $numero++;
                     $fil++;
                 }
             }
-            foreach ($key as $evaluador => $key2) {
-               $columna = 4;
-                foreach ($key2 as $grupo => $key3){
-                    $contar = count($key3);
-                    $array['promedio'] = array();
-                    $resultado = array_merge($key3, array('Promedio'=> $array));
-                    $promedio = 0;
-                    foreach ($resultado as $catalogo => $key4){
-                        if ($this->objParam->getParametro('datos')[0]['tipo'] != 'auto_evaluacion') {
-                            if ($numero == count($resul)) {
-                                $fin =  $fil ;
-                                $ini = $fin + 1 -  count($resul);
-                                $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fil + 1,"=SUM(".$this->equivalencias[$columna]."$ini:".$this->equivalencias[$columna]."$fin)");
-                            }
-                        }
-                        foreach ($key4 as $indice => $key5){
-                            if ($indice == 'promedio'){
-                                $indice =  $promedio/$contar ; // $promedio;
-                                $promedio = 0;
-                            }
-                            $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fil, $indice);
-                            if ($indice != 'promedio') {
-                                $promedio = $indice + $promedio;
-                            }
-                        }
-                        $columna++;
-                    }
-                }
-
-                $numero++;
-                $fil++;
-            }
         }
-       // exit;
-      /*5
-        $fila = 7;
-
-        foreach ($datos as $value){
-            if (!array_key_exists($value['evaluado'],$this->content) ||
-                !array_key_exists($value['descripcion_cargo'],$this->content[$value['evaluado']]) ||
-                !array_key_exists($value['gerencia'],$this->content[$value['evaluado']][$value['descripcion_cargo']])||
-                !array_key_exists($value['evaluador'],$this->content[$value['evaluado']][$value['descripcion_cargo']][$value['gerencia']]) ||
-                !array_key_exists($value['grupo'],$this->content[$value['evaluado']][$value['descripcion_cargo']][$value['gerencia']])[$value['evaluador']] ||
-                !array_key_exists($value['nombre_cat'],$this->content[$value['evaluado']][$value['descripcion_cargo']][$value['gerencia']])[$value['grupo']] ||
-                !array_key_exists($value['resp'],$this->content[$value['evaluado']][$value['descripcion_cargo']][$value['gerencia']])[$value['grupo']][$value['nombre_cat']] ) {
-
-                $this->content[$value['evaluado']][$value['descripcion_cargo']][$value['gerencia']][$value['evaluador']][$value['grupo']][$value['nombre_cat']][$value['resp']] = 1;
-            } else {
-                $this->content[$value['evaluado']][$value['descripcion_cargo']][$value['gerencia']][$value['evaluador']][$value['grupo']][$value['nombre_cat']] [$value['resp']] ++;
-            }
-        }
-        foreach ($datos as $value){
-            if(!array_key_exists($value['evaluador'],$this->funcionario) ||
-                !array_key_exists($value['evaluado'],$this->funcionario[$value['evaluador']])){
-                $this->funcionario[$value['evaluador']][$value['evaluado']] = 1;
-            }else{
-                $this->funcionario[$value['evaluador']][$value['evaluado']] ++;
-            }
-        }
-        $ger ='';
-        $eva ='';
-        $e ='';
-        foreach ($this->content as $funcionario =>$key) {
-            foreach ($key as $cargo => $key2) {
-                foreach ($key2 as $gerncia => $key3){
-                    if ($gerncia != $ger) {
-                        $this->imprimeSubtitulo($fila, $gerncia);
-                        $ger = $gerncia;
-                        $fila++;
-                    }
-                    foreach ($key3 as $evaluador => $key4) {
-
-                     //   if ($this->objParam->getParametro('datos')[0]['tipo'] != 'auto_evaluacion') {
-                            if ($evaluador != $eva) {
-                                if ($eva != '') {
-                                    $fila = $fila + 2;
-                                }
-                                $this->imprimeEvaludaro($fila, $evaluador);
-                                $eva = $evaluador;
-                                $fila++;
-                            }
-                      //  }
-                        $columna = 4;
-                        foreach ($key4 as $grupo => $key5){
-                            $contar = count($key5);
-                            $resultado = array_merge($key5, array('Promedio'=> array(0)));
-                            $sum = 0;
-                            foreach ($resultado as $item => $key6){
-                                foreach ($key6 as $resul => $key7){
-                                    if ($resul == 0){
-                                        $resul = $sum / $contar ;
-                                        $sum = 0;
-                                    }
-                                    $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fila, $resul);
-                                    $fin =  $fila ;
-                                    $ini = $fila - count($this->funcionario[$evaluador]);
-                                    $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fila + 1,"=SUM(".$this->equivalencias[$columna]."$ini:".$this->equivalencias[$columna]."$fin)");
-                                    $sum = $sum + $resul;
-                                }
-                                $columna ++;
-                            }
-                        }
-                        if ($evaluador != $e) {
-                             $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(1, $fila + count($this->funcionario[$evaluador]), 'TOTALES  PROMEDIO');
-                             $total = $fila + count($this->funcionario[$evaluador]);
-                             $this->docexcel->getActiveSheet()->mergeCells("B".$total.":D".$total);
-                             $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[1] . $total.":" . $this->equivalencias[$this->list-1] . $total)->applyFromArray($styleTitulos2);
-                            $e = $evaluador;
-                        }
-                    }
-                    $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(2, $fila, $cargo);
-                }
-            }
-            $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(1, $fila, $funcionario);
-            $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[1] . $fila.":" . $this->equivalencias[$this->list-1] . $fila)->applyFromArray($styleTitulos);
-            $fila++;
-        }*/
     }
     function imprimeSubtitulo($fila, $valor) {
         $styleTitulos = array(
