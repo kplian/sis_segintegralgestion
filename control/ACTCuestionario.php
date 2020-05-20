@@ -12,6 +12,7 @@ HISTORIAL DE MODIFICACIONES:
 
  */
 require_once(dirname(__FILE__).'/../reportes/RReporteCuestionario.php');
+require_once(dirname(__FILE__).'/../reportes/RReporteGeneral.php');
 class ACTCuestionario extends ACTbase{
 
     function listarCuestionario(){
@@ -74,20 +75,39 @@ class ACTCuestionario extends ACTbase{
 
         $this->objFunc=$this->create('MODCuestionario');
         $this->res=$this->objFunc->listarRepCuestionario($this->objParam);
+        $respuesta = $this->res->getDatos();
+        array_unshift ( $respuesta, array(  'id_encuesta'=>'0',
+            'nombre'=>'RESUMEN GENERAL EVALUACION DESEMPEÑO VALORES 270 GRADOS'));
+        $this->res->setDatos($respuesta);
         $this->res->imprimirRespuesta($this->res->generarJson());
     }
     function reporteCuestionario(){
 
         $this->objFunc = $this->create('MODCuestionario');
-        $this->res = $this->objFunc->reporteCuestionario($this->objParam);
-        $titulo = 'Reporte Encuesta';
-        $nombreArchivo = uniqid(md5(session_id()) . $titulo);
-        $nombreArchivo .= '.xls';
-        $this->objParam->addParametro('nombre_archivo', $nombreArchivo);
-        $this->objParam->addParametro('datos', $this->res->datos);
-        $this->objReporteFormato = new RReporteCuestionario($this->objParam);
-        $this->objReporteFormato->generarDatos();
-        $this->objReporteFormato->generarReporte();
+
+        if($this->objParam->getParametro('id_encuesta') != 0) {
+            $this->res = $this->objFunc->reporteCuestionario($this->objParam);
+            $titulo = 'Reporte Encuesta';
+            $nombreArchivo = uniqid(md5(session_id()) . $titulo);
+            $nombreArchivo .= '.xls';
+            $this->objParam->addParametro('nombre_archivo', $nombreArchivo);
+            $this->objParam->addParametro('datos', $this->res->datos);
+            $this->objReporteFormato = new RReporteCuestionario($this->objParam);
+            $this->objReporteFormato->generarDatos();
+            $this->objReporteFormato->generarReporte();
+        }else{
+            $this->res = $this->objFunc->reporteCuestionarioGeneral($this->objParam);
+            $titulo = 'Reporte General';
+            $nombreArchivo = uniqid(md5(session_id()) . $titulo);
+            $nombreArchivo .= '.xls';
+            $this->objParam->addParametro('nombre_archivo', $nombreArchivo);
+            $this->objParam->addParametro('datos', $this->res->datos);
+            $this->objReporteFormato = new RReporteGeneral($this->objParam);
+            $this->objReporteFormato->generarDatos();
+            $this->objReporteFormato->generarReporte();
+        }
+
+
         $this->mensajeExito = new Mensaje();
         $this->mensajeExito->setMensaje('EXITO', 'Reporte.php', 'Reporte generado','Se generó con éxito el reporte: ' . $nombreArchivo, 'control');
         $this->mensajeExito->setArchivoGenerado($nombreArchivo);
