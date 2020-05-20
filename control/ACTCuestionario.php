@@ -77,7 +77,7 @@ class ACTCuestionario extends ACTbase{
         $this->res=$this->objFunc->listarRepCuestionario($this->objParam);
         $respuesta = $this->res->getDatos();
         array_unshift ( $respuesta, array(  'id_encuesta'=>'0',
-            'nombre'=>'RESUMEN GENERAL EVALUACION DESEMPEÑO VALORES 270 GRADOS'));
+            'nombre'=>'RESUMEN GENERAL EVALUACION DESEMPEÑO VALORES 360 GRADOS'));
         $this->res->setDatos($respuesta);
         $this->res->imprimirRespuesta($this->res->generarJson());
     }
