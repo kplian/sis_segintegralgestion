@@ -379,3 +379,27 @@ select pxp.f_insert_testructura_gui ('TPOEVA', 'PAREVA');
 select pxp.f_insert_testructura_gui ('EVAFUNC', 'EVALU');
 select pxp.f_insert_testructura_gui ('REPEVAL', 'REPEVA');
 /**********************************F-DEP-MANU-SSIG-1-06/05/2020********************************************/
+/**********************************I-DEP-MMV-SSIG-18-21/05/2020********************************************/
+CREATE OR REPLACE VIEW ssig.vresultado_encuesta(
+    id_encuesta,
+    id_func_evaluado,
+    resultado)
+AS
+  SELECT en.id_encuesta,
+         re.id_func_evaluado,
+         sum(ssig.f_obtener_valor_respuesta(re.respuesta, ca.id_encuesta)) AS
+           resultado
+  FROM ssig.trespuestas re
+       JOIN ssig.tencuesta pe ON pe.id_encuesta = re.id_pregunta AND pe.pregunta
+         ::text = 'si'::text
+       JOIN ssig.tencuesta ca ON ca.id_encuesta = pe.id_encuesta_padre AND
+         ca.categoria::text = 'si'::text
+       JOIN ssig.tencuesta gr ON gr.id_encuesta = ca.id_encuesta_padre AND
+         gr.grupo::text = 'si'::text
+       JOIN ssig.tencuesta en ON en.id_encuesta = gr.id_encuesta_padre AND
+         en.id_encuesta_padre IS NULL
+  WHERE re.id_func_evaluado <> 0
+  GROUP BY en.id_encuesta,
+           re.id_func_evaluado;
+/**********************************I-DEP-MMV-SSIG-18-21/05/2020********************************************/
+
