@@ -17,8 +17,9 @@ class RReporteCuestionario{
     public  $url_archivo;
     private $titulos = array();
     private $content = array();
-    private $funcionario = array();
     private $funcinario = array();
+    private $total = array();
+
     private $list = 0;
 
     function __construct(CTParametro $objParam){
@@ -128,7 +129,7 @@ class RReporteCuestionario{
         $styleCatalogo2 = array(
             'font'  => array(
                 'bold'  => true,
-                'size'  => 10,
+                'size'  => 8,
                 'name'  => 'Arial',
                 'color' => array(
                     'rgb' => '070707'
@@ -146,7 +147,57 @@ class RReporteCuestionario{
             'fill' => array(
                 'type' => PHPExcel_Style_Fill::FILL_SOLID,
                 'color' => array(
-                    'rgb' => 'E6F9C3'
+                    'rgb' => 'D3FBD2'
+                )
+            ),
+        );
+        $styleSuma = array(
+            'font'  => array(
+                'bold'  => true,
+                'size'  => 8,
+                'name'  => 'Arial',
+                'color' => array(
+                    'rgb' => '070707'
+                )
+            ),
+            'borders' => array(
+                'allborders' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                )
+            ),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+            ),
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => array(
+                    'rgb' => 'D39FB9'
+                )
+            ),
+        );
+        $styleProme = array(
+            'font'  => array(
+                'bold'  => true,
+                'size'  => 8,
+                'name'  => 'Arial',
+                'color' => array(
+                    'rgb' => '070707'
+                )
+            ),
+            'borders' => array(
+                'allborders' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                )
+            ),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+            ),
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => array(
+                    'rgb' => 'F0C859'
                 )
             ),
         );
@@ -183,24 +234,39 @@ class RReporteCuestionario{
             }
             $columnaSub = 4;
             $columna = 4;
-            foreach ($this->titulos as $value => $key) {
-                $resultado = array_merge($key, array('Promedio' => ''));
+            $dibujar =  array_merge($this->titulos, array('PUNTAJE TOTAL (%)' => array()));
+            foreach ($dibujar as $value => $key) {
+                $suma = array_merge($key, array('TOTAL' => ''));
+                $resultado = array_merge($suma, array('PROMEDIO' => ''));
                 $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columnaSub, 5, $value);
-                $this->docexcel->getActiveSheet()->mergeCells($this->equivalencias[$columnaSub] . "5:" . $this->equivalencias[$columnaSub + count($resultado) - 1] . "5");
-                $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[$columnaSub] . "5:" . $this->equivalencias[$columnaSub + count($resultado) - 1] . "6")->applyFromArray($styleCatalogo);
-
+                if($value == 'PUNTAJE TOTAL (%)'){
+                    $this->docexcel->getActiveSheet()->mergeCells($this->equivalencias[$columnaSub] . "5:" . $this->equivalencias[$columnaSub + count($resultado) - 1] . "6");
+                }else{
+                    $this->docexcel->getActiveSheet()->mergeCells($this->equivalencias[$columnaSub] . "5:" . $this->equivalencias[$columnaSub + count($resultado) - 1] . "5");
+                }
+                if($columna%2==0){
+                    $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[$columnaSub] . "5:" . $this->equivalencias[$columnaSub + count($resultado) - 1] . "6")->applyFromArray($styleCatalogo);
+                }else{
+                    $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[$columnaSub] . "5:" . $this->equivalencias[$columnaSub + count($resultado) - 1] . "6")->applyFromArray($styleCatalogo2);
+                }
                 foreach ($resultado as $item => $key2) {
-                    $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columnaSub, 6, $item);
-                    $this->docexcel->getActiveSheet()->getColumnDimension($this->equivalencias[$columnaSub])->setWidth(15);
-                    $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[4] . "6:" . $this->equivalencias[$columnaSub] . "6")->getAlignment()->setWrapText(true);
-                    $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[4] . "6:" . $this->equivalencias[$columnaSub] . "6")->applyFromArray($styleCatalogo);
-                    $columnaSub++;
-                    $this->list = $columnaSub;
+                    if($value!='PUNTAJE TOTAL (%)') {
+                        $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columnaSub, 6, $item . ' (%)');
+                        $this->docexcel->getActiveSheet()->getColumnDimension($this->equivalencias[$columnaSub])->setWidth(15);
+                        $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[4] . "6:" . $this->equivalencias[$columnaSub] . "6")->getAlignment()->setWrapText(true);
+                        if($item == 'TOTAL'){
+                            $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[$columnaSub] . "6:" . $this->equivalencias[$columnaSub] . "6")->applyFromArray($styleSuma);
+                        } if($item == 'PROMEDIO'){
+                            $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[$columnaSub] . "6:" . $this->equivalencias[$columnaSub] . "6")->applyFromArray($styleProme);
+                        }
+                        $columnaSub++;
+                        $this->list = $columnaSub;
+                    }
                 }
                 $columna++;
             }
-            $this->docexcel->getActiveSheet()->getStyle("B3:" . $this->equivalencias[$this->list - 1] . "4")->applyFromArray($styleTitulos);
-            $this->docexcel->getActiveSheet()->mergeCells("B3:" . $this->equivalencias[$this->list - 1] . "4");
+            $this->docexcel->getActiveSheet()->getStyle("B3:" . $this->equivalencias[$this->list + 1 ] . "4")->applyFromArray($styleTitulos);
+            $this->docexcel->getActiveSheet()->mergeCells("B3:" . $this->equivalencias[$this->list + 1] . "4");
         }else{
             $this->docexcel->getActiveSheet()->setCellValue('B5','La evaluacion no tiene Registros.');
         }
@@ -230,7 +296,27 @@ class RReporteCuestionario{
                 'allborders' => array(
                     'style' => PHPExcel_Style_Border::BORDER_THIN
                 )
-            ));
+            )
+        );
+
+        $styleTitulos3 = array(
+            'font'  => array(
+                'bold'  => true,
+                'size'  => 11,
+                'name'  => 'Arial'
+            ),
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => array(
+                    'rgb' => 'C9E2D0'
+                )
+            ),
+            'borders' => array(
+                'allborders' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                )
+            )
+        );
         $datos = $this->objParam->getParametro('datos');
 
         if (count($datos) != 0) {
@@ -278,8 +364,7 @@ class RReporteCuestionario{
                         if ($numero == count($resultado)) {
                             $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(1, $fila + 1, 'TOTALES  PROMEDIO POR SUBDIMENSIONES');
                             $gg = $fila + 1;
-                            $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[1] . $gg . ":" . $this->equivalencias[$this->list - 1] . $gg)->applyFromArray($styleTitulos2);
-
+                            $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[1] . $gg . ":" . $this->equivalencias[$this->list + 1] . $gg)->applyFromArray($styleTitulos2);
                         }
                     }
                     $numero++;
@@ -289,8 +374,7 @@ class RReporteCuestionario{
                             $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(3, $fila, $ger);
                         }
                     }
-                    $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[1] . $fila . ":" . $this->equivalencias[$this->list - 1] . $fila)->applyFromArray($styleTitulos);
-
+                    $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[1] . $fila . ":" . $this->equivalencias[$this->list +  1] . $fila)->applyFromArray($styleTitulos);
                     $fila++;
                 }
             }
@@ -310,11 +394,16 @@ class RReporteCuestionario{
                 }
                 foreach ($key as $evaluador => $key2) {
                     $columna = 4;
+                    $total = array();
+
                     foreach ($key2 as $grupo => $key3) {
                         $contar = count($key3);
-                        $array['promedio'] = array();
-                        $resultado = array_merge($key3, array('Promedio' => $array));
+                        $array['suma'] = array();
+                        $suma = array_merge($key3, array('Suma' => $array));
+                        $array2['promedio'] = array();
+                        $resultado = array_merge($suma, array('Promedio' => $array2));
                         $promedio = 0;
+                        $suma   = 0;
                         foreach ($resultado as $catalogo => $key4) {
                             if ($this->objParam->getParametro('datos')[0]['tipo'] != 'auto_evaluacion') {
                                 if ($numero == count($resul)) {
@@ -322,28 +411,48 @@ class RReporteCuestionario{
                                     $ini = $fin + 1 - count($resul);
                                     $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fil + 1, "=SUM(" . $this->equivalencias[$columna] . "$ini:" . $this->equivalencias[$columna] . "$fin)/".count($resul)."");
                                     $ua = $fil + 1;
-                                    $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[1] . $ua.":" . $this->equivalencias[$this->list-1] . $ua)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-
+                                    $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[1] . $ua.":" . $this->equivalencias[$this->list + 1] . $ua)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
                                 }
                             }
                             foreach ($key4 as $indice => $key5) {
-                                if ($indice == 'promedio') {
-                                    $indice = $promedio / $contar; // $promedio;
-                                    $promedio = 0;
+                                if ($indice != 'suma') {
+                                    if ($indice != 'promedio') {
+                                        array_push($total,$indice);
+                                    }
+                                }
+                                if ($indice == 'suma') {
+                                    $indice = $suma ;
+                                    $suma = 0;
+                                }
+                                if ( $indice == 'promedio') {
+                                     $indice = number_format($promedio / $contar, 1, '.', '');
+                                     $promedio = 0;
                                 }
                                 $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fil, $indice);
+                                $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna + 1, $fil, array_sum($total));
+                                $this->docexcel->getActiveSheet()->mergeCells($this->equivalencias[$this->list] . $fil.":" . $this->equivalencias[$this->list + 1] . $fil);
+                                if ($indice != 'suma') {
+                                    if ($indice != 'promedio')
+                                        if ($indice != '')
+                                        $suma = $indice + $suma;
+                                }
                                 if ($indice != 'promedio') {
-                                    $promedio = $indice + $promedio;
+                                    if ($indice != 'suma')
+                                        if ($indice != '')
+                                            $promedio = $indice + $promedio;
                                 }
                             }
                             $columna++;
                         }
                     }
-
                     $numero++;
                     $fil++;
                 }
             }
+
+
+
+
         }
     }
     function imprimeSubtitulo($fila, $valor) {
@@ -367,8 +476,8 @@ class RReporteCuestionario{
 
 
         $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(1, $fila, $valor);
-        $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[1] . $fila.":" . $this->equivalencias[$this->list-1] . $fila)->applyFromArray($styleTitulos);
-        $this->docexcel->getActiveSheet()->mergeCells($this->equivalencias[1] . $fila.":" . $this->equivalencias[$this->list-1] . $fila);
+        $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[1] . $fila.":" . $this->equivalencias[$this->list + 1] . $fila)->applyFromArray($styleTitulos);
+        $this->docexcel->getActiveSheet()->mergeCells($this->equivalencias[1] . $fila.":" . $this->equivalencias[$this->list + 1] . $fila);
 
     }
     function imprimeEvaludaro($fila, $valor) {
@@ -392,8 +501,8 @@ class RReporteCuestionario{
 
 
         $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(1, $fila, $valor);
-        $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[1] . $fila.":" . $this->equivalencias[$this->list-1] . $fila)->applyFromArray($styleTitulos);
-        $this->docexcel->getActiveSheet()->mergeCells($this->equivalencias[1] . $fila.":" . $this->equivalencias[$this->list-1] . $fila);
+        $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[1] . $fila.":" . $this->equivalencias[$this->list + 1] . $fila)->applyFromArray($styleTitulos);
+        $this->docexcel->getActiveSheet()->mergeCells($this->equivalencias[1] . $fila.":" . $this->equivalencias[$this->list + 1] . $fila);
     }
 
     function generarReporte(){

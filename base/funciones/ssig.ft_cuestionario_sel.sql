@@ -602,8 +602,6 @@ BEGIN
 	elsif(p_transaccion='SSIG_REEN_SEL')then
 
     	begin
-
-
 			v_consulta:= 'with recursive nodes(id_encuesta, id_encuesta_padre, nombre,grupo,categoria,
                               pregunta,peso_categoria) as
                             (
@@ -663,7 +661,7 @@ BEGIN
                                    func.desc_funcionario1 as evaluador,
                                    func.descripcion_cargo,
 
-                                   COALESCE(sum(CASE
+                                   round(sum(CASE
                                          WHEN (r.respuesta = 1) THEN (
                                                                        select enc.peso_categoria * 1
                                                                        from ssig.tencuesta enc
@@ -694,9 +692,9 @@ BEGIN
                                                                        where enc.id_encuesta =
                                                                          nodes.id_encuesta_padre
                                    )
-                                       END),0) as resp
+                                       END),2) as resp
                             from nodes
-                                 left join ssig.trespuestas r on r.id_pregunta = nodes.id_encuesta
+                                  left join ssig.trespuestas r on r.id_pregunta = nodes.id_encuesta
                                  inner join orga.vfuncionario_cargo func on func.id_funcionario =  r.id_funcionario  --r.id_func_evaluado
                                  inner join orga.vfuncionario fun on fun.id_funcionario = r.id_func_evaluado
                                  inner join orga.tuo ger on ger.id_uo = orga.f_get_uo_gerencia(func.id_uo,
@@ -734,7 +732,7 @@ BEGIN
                                  ger.codigo,
                                  fu.desc_funcionario1,
                                  fu.nombre_cargo,
-                                 rs.resultado
+                                round( rs.resultado,2) as resultado
                           from ssig.tencuesta en
                           inner join ssig.vresultado_encuesta rs on rs.id_encuesta = en.id_encuesta
                           inner join orga.vfuncionario_cargo fu on fu.id_funcionario = rs.id_func_evaluado
