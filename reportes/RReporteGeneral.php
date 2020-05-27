@@ -152,7 +152,7 @@ class RReporteGeneral{
         $dibujar =  array_merge($this->titulo, array('PUNTAJE TOTAL' => ''));
         $columna = 4;
         foreach ($dibujar as $item => $key){
-            $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna, 5, $item);
+            $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna, 5, $item.' (%)');
             $this->docexcel->getActiveSheet()->getColumnDimension($this->equivalencias[$columna])->setWidth(25);
             $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[4] . "5:" . $this->equivalencias[$columna] . "7")->getAlignment()->setWrapText(true);
             $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[4] . "5:" . $this->equivalencias[$columna] . "7")->applyFromArray($styleCatalogo);
