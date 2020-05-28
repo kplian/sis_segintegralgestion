@@ -425,7 +425,7 @@ class RReporteCuestionario{
                                     $suma = 0;
                                 }
                                 if ( $indice == 'promedio') {
-                                     $indice = number_format($promedio / $contar, 1, '.', '');
+                                     $indice = number_format($suma / $contar, 2, '.', '');
                                      $promedio = 0;
                                 }
                                 $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fil, $indice);
@@ -449,10 +449,6 @@ class RReporteCuestionario{
                     $fil++;
                 }
             }
-
-
-
-
         }
     }
     function imprimeSubtitulo($fila, $valor) {
