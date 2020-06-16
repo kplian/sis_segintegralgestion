@@ -17,7 +17,7 @@ $body$
  HISTORIAL DE MODIFICACIONES:
 #ISSUE				FECHA				AUTOR				DESCRIPCION
  #0				29-04-2020 06:10:09								Funcion que devuelve conjuntos de registros de las consultas relacionadas con la tabla 'ssig.tencuesta'
- #
+ #20               16/06/2020           MMV                 Nuevos capos peso pregunta y encuesta
  ***************************************************************************/
 
 DECLARE
@@ -154,7 +154,9 @@ BEGIN
                                     ''hijo''
                                     else
                                     ''hoja''
-                                    end)::varchar as tipo_nodo
+                                    end)::varchar as tipo_nodo,
+                                    eta.peso_pregunta,  --#20
+                                    eta.peso_encuesta  --#20
                                 from ssig.tencuesta eta
                                 inner join segu.tusuario usu1 on usu1.id_usuario = eta.id_usuario_reg
                                 left join segu.tusuario usu2 on usu2.id_usuario = eta.id_usuario_mod

@@ -17,8 +17,8 @@ class ACTEncuesta extends ACTbase{
 		$this->objParam->defecto('ordenacion','id_encuesta');
 		$this->objParam->defecto('dir_ordenacion','asc');
 		if ($this->objParam->getParametro('raiz')!= ''){
-            $this->objParam->addFiltro("eta.id_encuesta_padre is null ");
 
+            $this->objParam->addFiltro("eta.id_encuesta_padre is null ");
         }
 		if($this->objParam->getParametro('tipoReporte')=='excel_grid' || $this->objParam->getParametro('tipoReporte')=='pdf_grid'){
 			$this->objReporte = new Reporte($this->objParam,$this);
@@ -28,6 +28,7 @@ class ACTEncuesta extends ACTbase{
 			
 			$this->res=$this->objFunc->listarEncuesta($this->objParam);
 		}
+
 		$this->res->imprimirRespuesta($this->res->generarJson());
 	}
     function listarEncuestaArb(){

@@ -69,14 +69,16 @@ class MODEncuesta extends MODbase{
 		$this->setParametro('nombre','nombre','varchar');
 		$this->setParametro('grupo','grupo','varchar');
 		$this->setParametro('categoria','categoria','varchar');
-		$this->setParametro('habilitado_categoria','habilitado_categoria','bool');
+		$this->setParametro('habilitado_categoria','habilitado_categoria','boolean');
 		$this->setParametro('peso_categoria','peso_categoria','numeric');
 		$this->setParametro('pregunta','pregunta','varchar');
-		$this->setParametro('habilitado_pregunta','habilitado_pregunta','bool');
+		$this->setParametro('habilitado_pregunta','habilitado_pregunta','boolean');
 		$this->setParametro('tipo_pregunta','tipo_pregunta','varchar');
 		$this->setParametro('id_encuesta_padre','id_encuesta_padre','varchar');
         $this->setParametro('tipo','tipo','varchar');
         $this->setParametro('tipo_nombre','tipo_nombre','varchar');
+        $this->setParametro('peso_pregunta','peso_pregunta','numeric');
+        $this->setParametro('peso_encuesta','peso_encuesta','numeric');
 
 		//Ejecuta la instruccion
 		$this->armarConsulta();
@@ -100,14 +102,16 @@ class MODEncuesta extends MODbase{
 		$this->setParametro('nombre','nombre','varchar');
 		$this->setParametro('grupo','grupo','varchar');
 		$this->setParametro('categoria','categoria','varchar');
-		$this->setParametro('habilitado_categoria','habilitado_categoria','bool');
+		$this->setParametro('habilitado_categoria','habilitado_categoria','boolean');
 		$this->setParametro('peso_categoria','peso_categoria','numeric');
 		$this->setParametro('pregunta','pregunta','varchar');
-		$this->setParametro('habilitado_pregunta','habilitado_pregunta','bool');
+		$this->setParametro('habilitado_pregunta','habilitado_pregunta','boolean');
 		$this->setParametro('tipo_pregunta','tipo_pregunta','varchar');
 		$this->setParametro('id_encuesta_padre','id_encuesta_padre','varchar');
         $this->setParametro('tipo','tipo','varchar');
         $this->setParametro('tipo_nombre','tipo_nombre','varchar');
+        $this->setParametro('peso_pregunta','peso_pregunta','numeric');
+        $this->setParametro('peso_encuesta','peso_encuesta','numeric');
 
 		//Ejecuta la instruccion
 		$this->armarConsulta();
@@ -170,6 +174,8 @@ class MODEncuesta extends MODbase{
         $this->captura('tipo','varchar');
         $this->captura('tipo_nombre','varchar');
         $this->captura('tipo_nodo','varchar');
+        $this->captura('peso_pregunta','numeric');
+        $this->captura('peso_encuesta','numeric');
         //Ejecuta la instruccion
         $this->armarConsulta();
         $this->ejecutarConsulta();
