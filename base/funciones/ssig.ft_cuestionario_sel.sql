@@ -17,7 +17,8 @@ $body$
  HISTORIAL DE MODIFICACIONES:
 #ISSUE				FECHA				AUTOR				DESCRIPCION
  #0				21-04-2020 08:31:41								Funcion que devuelve conjuntos de registros de las consultas relacionadas con la tabla 'ssig.tcuestionario'
- #3				04-05-2020 08:31:41			manuel guerra	corrección de count en función
+ #3				04-05-2020 08:31:41		manuel guerra	corrección de count en función
+ #21			 16/06/2020				MMV				Refactorización Reportes
  #
  ***************************************************************************/
 
@@ -593,9 +594,9 @@ BEGIN
 		end;
 
      /*********************************
- 	#TRANSACCION:  'SSIG_REEN_SEL'
+ 	#TRANSACCION:  'SSIG_REEN_SEL' #21
  	#DESCRIPCION:	Reporte encuesta
- 	#AUTOR:		mguerra
+ 	#AUTOR:		MMV
  	#FECHA:		21-04-2020 08:31:41
 	***********************************/
 
@@ -603,7 +604,8 @@ BEGIN
 
     	begin
 			v_consulta:= 'with recursive nodes(id_encuesta, id_encuesta_padre, nombre,grupo,categoria,
-                              pregunta,peso_categoria) as
+                              pregunta,peso_categoria,
+                              peso_pregunta) as
                             (
                                 select padre.id_encuesta,
                                        padre.id_encuesta_padre,
@@ -611,7 +613,8 @@ BEGIN
                                        padre.grupo,
                                        padre.categoria,
                                        padre.pregunta,
-                                       padre.peso_categoria
+                                       padre.peso_categoria,
+                                       padre.peso_pregunta
                                 from ssig.tencuesta padre
                                 where padre.id_encuesta_padre is null and
                                       padre.id_encuesta = '||v_parametros.id_encuesta||'
@@ -622,7 +625,8 @@ BEGIN
                                        hijo.grupo,
                                        n.categoria,
                                        hijo.pregunta,
-                                       hijo.peso_categoria
+                                       hijo.peso_categoria,
+                                       hijo.peso_pregunta
                                 from ssig.tencuesta hijo
                                      join nodes n on n.id_encuesta = hijo.id_encuesta_padre)
                             select id_encuesta_padre,
@@ -660,41 +664,26 @@ BEGIN
                                    fun.desc_funcionario1 as evaluado,
                                    func.desc_funcionario1 as evaluador,
                                    func.descripcion_cargo,
-
-                                   round(sum(CASE
-                                         WHEN (r.respuesta = 1) THEN (
-                                                                       select enc.peso_categoria * 1
-                                                                       from ssig.tencuesta enc
-                                                                       where enc.id_encuesta =
-                                                                         nodes.id_encuesta_padre
+ 								sum((case
+                                         when (r.respuesta = 1) then (
+                                         10
                                    )
-                                         WHEN (r.respuesta = 2) THEN (
-                                                                       select enc.peso_categoria * 0.8
-                                                                       from ssig.tencuesta enc
-                                                                       where enc.id_encuesta =
-                                                                         nodes.id_encuesta_padre
+                                         when (r.respuesta = 2) then (
+                                         7
                                    )
-                                         WHEN (r.respuesta = 3) THEN (
-                                                                       select enc.peso_categoria * 0.5
-                                                                       from ssig.tencuesta enc
-                                                                       where enc.id_encuesta =
-                                                                         nodes.id_encuesta_padre
+                                         when (r.respuesta = 3) then (
+                                         5
                                    )
-                                         WHEN (r.respuesta = 4) THEN (
-                                                                       select enc.peso_categoria * 0.3
-                                                                       from ssig.tencuesta enc
-                                                                       where enc.id_encuesta =
-                                                                         nodes.id_encuesta_padre
+                                         when (r.respuesta = 4) then (
+                                         3
                                    )
-                                         WHEN (r.respuesta = 5) THEN (
-                                                                       select r.respuesta * 0
-                                                                       from ssig.tencuesta enc
-                                                                       where enc.id_encuesta =
-                                                                         nodes.id_encuesta_padre
+                                         when (r.respuesta = 5) then (
+                                         1
                                    )
-                                       END),2) as resp
+                                       end) * nodes.peso_pregunta
+                                       )as resp
                             from nodes
-                                  left join ssig.trespuestas r on r.id_pregunta = nodes.id_encuesta
+                                 inner join ssig.trespuestas r on r.id_pregunta = nodes.id_encuesta
                                  inner join orga.vfuncionario_cargo func on func.id_funcionario =  r.id_funcionario  --r.id_func_evaluado
                                  inner join orga.vfuncionario fun on fun.id_funcionario = r.id_func_evaluado
                                  inner join orga.tuo ger on ger.id_uo = orga.f_get_uo_gerencia(func.id_uo,
@@ -717,9 +706,9 @@ BEGIN
 		end;
 
     /*********************************
- 	#TRANSACCION:  'SSIG_RGE_SEL'
+ 	#TRANSACCION:  'SSIG_RGE_SEL' #21
  	#DESCRIPCION:	Reporte encuesta
- 	#AUTOR:		mguerra
+ 	#AUTOR:		MMV
  	#FECHA:		21-04-2020 08:31:41
 	***********************************/
 
@@ -727,27 +716,76 @@ BEGIN
 
     	begin
 
-        	v_consulta:= 'select en.id_encuesta,
+        	v_consulta:= 'select fi.id_encuesta,
+                                 fi.evaluacion,
+                                 fi.gerencia,
+                                 fi.id_func_evaluado,
+                                 fi.desc_funcionario1,
+                                 fi.descripcion_cargo,
+                                 round((sum (fi.resultado) / fi.total_encuestador),2) as resultado,
+                                 fi.peso_encuesta,
+                                 round((sum (fi.resultado) / fi.total_encuestador * fi.peso_encuesta /100),2) as puntaje
+                          from (
+                          select en.id_encuesta,
                                  en.nombre as evaluacion,
-                                 ger.codigo,
+                                 ger.codigo as gerencia,
+                                 rs.id_func_evaluado,
                                  fu.desc_funcionario1,
-                                 fu.nombre_cargo,
-                                round( rs.resultado,2) as resultado
+                                 fu.descripcion_cargo,
+                                 en.peso_encuesta,
+                                 sum(case
+                                    when rs.respuesta = 1 then
+                                    10 * pe.peso_pregunta
+                                    when rs.respuesta = 2 then
+                                    7 * pe.peso_pregunta
+                                    when rs.respuesta = 3 then
+                                    5 * pe.peso_pregunta
+                                    when rs.respuesta = 4 then
+                                    3 * pe.peso_pregunta
+                                    when rs.respuesta = 5 then
+                                    1 * pe.peso_pregunta
+                                    else
+                                    0
+                                    end) as resultado,
+                                    ( select count(distinct cf.id_funcionario)
+                                                    from ssig.tcuestionario cu
+                                                    inner join ssig.tcuestionario_funcionario  cf on cf.id_cuestionario = cu.id_cuestionario
+                                                    inner join ssig.tevaluados  ev on ev.id_cuestionario_funcionario = cf.id_cuestionario_funcionario
+                                                    inner join ssig.trespuestas re on re.id_funcionario = cf.id_funcionario
+                                                    where cu.id_tipo_evalucion =  en.id_encuesta
+                                                      and ev.id_funcionario = rs.id_func_evaluado
+                                                      and cf.estado = ''finalizado'') as total_encuestador
                           from ssig.tencuesta en
-                          inner join ssig.vresultado_encuesta rs on rs.id_encuesta = en.id_encuesta
+                          inner join ssig.tencuesta gr on gr.id_encuesta_padre = en.id_encuesta
+                          inner join ssig.tencuesta ca on ca.id_encuesta_padre = gr.id_encuesta
+                          inner join ssig.tencuesta pe on pe.id_encuesta_padre = ca.id_encuesta
+                          inner join ssig.trespuestas rs on rs.id_pregunta = pe.id_encuesta
                           inner join orga.vfuncionario_cargo fu on fu.id_funcionario = rs.id_func_evaluado
-                           inner join orga.tuo ger on ger.id_uo = orga.f_get_uo_gerencia(fu.id_uo,
-                                                             NULL::integer, NULL::date)
-                          where en.id_encuesta_padre is null and (fu.fecha_finalizacion is null or
-                                                             fu.fecha_finalizacion >= now()::date)
-                          order by evaluacion, codigo,desc_funcionario1';
+                          inner join orga.tuo ger on ger.id_uo = orga.f_get_uo_gerencia(fu.id_uo,NULL::integer, NULL::date)
+                          where en.id_encuesta_padre is null and (fu.fecha_finalizacion is null or fu.fecha_finalizacion >= now()::date)
+                          group by en.id_encuesta,
+                                   en.nombre,
+                                   fu.desc_funcionario1,
+                                   rs.id_func_evaluado,
+                                   fu.descripcion_cargo,
+                                   ger.codigo,
+                                   en.peso_encuesta,
+                                    pe.peso_pregunta
+                          order by evaluacion,gerencia,desc_funcionario1) fi
+                          group by fi.id_encuesta,
+                                 fi.evaluacion,
+                                 fi.gerencia,
+                                 fi.id_func_evaluado,
+                                 fi.desc_funcionario1,
+                                 fi.descripcion_cargo,
+                                 fi.peso_encuesta,
+                                 fi.total_encuestador,
+                                 fi.peso_encuesta';
 
     	--Devuelve la respuesta
 			return v_consulta;
 
 		end;
-
-
 
 	else
 

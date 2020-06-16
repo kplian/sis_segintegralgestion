@@ -16,9 +16,12 @@ class RReporteGeneral{
     private $objParam;
     private $content = array();
     private $nombres = array();
+    private $content2 = array();
+    private $nombres2 = array();
     public  $url_archivo;
     private $titulo = array();
     private $list = 0;
+    private $list2 = 0;
 
     function __construct(CTParametro $objParam){
         $this->objParam = $objParam;
@@ -53,11 +56,10 @@ class RReporteGeneral{
         $this->docexcel->createSheet();
         $this->docexcel->getActiveSheet()->setTitle('Encuesta');
         $this->docexcel->setActiveSheetIndex(0);
-
         $styleFuncionario = array(
             'font'  => array(
                 'bold'  => true,
-                'size'  => 10,
+                'size'  => 7,
                 'name'  => 'Arial',
                 'color' => array(
                     'rgb' => '070707'
@@ -82,7 +84,7 @@ class RReporteGeneral{
         $styleCatalogo = array(
             'font'  => array(
                 'bold'  => true,
-                'size'  => 8,
+                'size'  => 7,
                 'name'  => 'Arial',
                 'color' => array(
                     'rgb' => '070707'
@@ -101,6 +103,31 @@ class RReporteGeneral{
                 'type' => PHPExcel_Style_Fill::FILL_SOLID,
                 'color' => array(
                     'rgb' => 'C9DAE2'
+                )
+            ),
+        );
+        $styleCatalogo4 = array(
+            'font'  => array(
+                'bold'  => true,
+                'size'  => 6,
+                'name'  => 'Arial',
+                'color' => array(
+                    'rgb' => '070707'
+                )
+            ),
+            'borders' => array(
+                'allborders' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                )
+            ),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+            ),
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => array(
+                    'rgb' => 'F0C859'
                 )
             ),
         );
@@ -131,28 +158,24 @@ class RReporteGeneral{
         $this->docexcel->getActiveSheet()->getColumnDimension('D')->setWidth(10);
         $this->docexcel->getActiveSheet()->getStyle('B5:D7')->applyFromArray($styleFuncionario);
         $this->docexcel->getActiveSheet()->getStyle('B5:D7')->getAlignment()->setWrapText(true);
-
         $this->docexcel->getActiveSheet()->setCellValue('B5','Nombre');
         $this->docexcel->getActiveSheet()->mergeCells('B5:B7');
-
         $this->docexcel->getActiveSheet()->setCellValue('C5','Cargo');
         $this->docexcel->getActiveSheet()->mergeCells('C5:C7');
-
         $this->docexcel->getActiveSheet()->setCellValue('D5','Ger.');
         $this->docexcel->getActiveSheet()->mergeCells('D5:D7');
 
-
         foreach ($datos as $value) {
-            if (!array_key_exists($value['evaluacion'], $this->titulo)) {
-                $this->titulo[$value['evaluacion']] = 1;
+            if (!array_key_exists($value['evaluacion'], $this->titulo) ||
+                !array_key_exists($value['peso_encuesta'], $this->titulo[$value['evaluacion']])) {
+                $this->titulo[$value['evaluacion']][$value['peso_encuesta']] = 1;
             } else {
-                $this->titulo[$value['evaluacion']]++;
+                $this->titulo[$value['evaluacion']][$value['peso_encuesta']]++;
             }
         }
-        $dibujar =  array_merge($this->titulo, array('PUNTAJE TOTAL' => ''));
         $columna = 4;
-        foreach ($dibujar as $item => $key){
-            $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna, 5, $item.' (%)');
+        foreach ($this->titulo as $item => $key){
+            $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna, 5, $item);
             $this->docexcel->getActiveSheet()->getColumnDimension($this->equivalencias[$columna])->setWidth(25);
             $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[4] . "5:" . $this->equivalencias[$columna] . "7")->getAlignment()->setWrapText(true);
             $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[4] . "5:" . $this->equivalencias[$columna] . "7")->applyFromArray($styleCatalogo);
@@ -199,16 +222,18 @@ class RReporteGeneral{
 
         foreach ($datos as $value) {
             if (!array_key_exists($value['desc_funcionario1'], $this->nombres) ||
-                !array_key_exists($value['nombre_cargo'], $this->nombres[$value['desc_funcionario1']]) ||
-                !array_key_exists($value['codigo'], $this->nombres[$value['desc_funcionario1']][$value['nombre_cargo']])
+                !array_key_exists($value['descripcion_cargo'], $this->nombres[$value['desc_funcionario1']]) ||
+                !array_key_exists($value['gerencia'], $this->nombres[$value['desc_funcionario1']][$value['descripcion_cargo']])
             ) {
-                $this->nombres[$value['desc_funcionario1']][$value['nombre_cargo']][$value['codigo']] = 1;
+                $this->nombres[$value['desc_funcionario1']][$value['descripcion_cargo']][$value['gerencia']] = 1;
             } else {
-                $this->nombres[$value['desc_funcionario1']][$value['nombre_cargo']][$value['codigo']] ++;
+                $this->nombres[$value['desc_funcionario1']][$value['descripcion_cargo']][$value['gerencia']] ++;
             }
         }
         $fill = 8;
+        // var_dump($this->nombres);exit;
         foreach ($this->nombres as $nombre => $key){
+            $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(1, $fill, $nombre);
             $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[1] . $fill . ":" . $this->equivalencias[$this->list - 1] . $fill)->applyFromArray($styleTitulos);
             foreach ($key as $cargo => $key2){
                 $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(2, $fill, $cargo);
@@ -218,7 +243,7 @@ class RReporteGeneral{
             }
             $fill ++;
         }
-        // nombres
+       // nombres
         foreach ($datos as $value) {
             if (!array_key_exists($value['desc_funcionario1'], $this->content) ||
                 !array_key_exists($value['evaluacion'], $this->content[$value['desc_funcionario1']]) ||
@@ -232,12 +257,214 @@ class RReporteGeneral{
 
         $fila = 8;
         foreach ($this->content as $funcionario => $key){
-            $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(1, $fila, $funcionario);
             $columna = 4;
             foreach ($key as $evaluacion => $key2){
                 foreach ($key2 as  $resultado => $key3){
                     $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fila, $resultado);
-                    $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($this->list - 1 , $fila, "=SUM(" . $this->equivalencias[4] . "$fila:" . $this->equivalencias[$columna] ."$fila)");
+                    $columna++;
+                }
+            }
+            $fila++;
+        }
+        $this->imprimeCabecera3();
+    }
+    function imprimeCabecera3() {
+        $this->docexcel->createSheet(1);
+        $this->docexcel->setActiveSheetIndex(1);
+        $this->docexcel->getActiveSheet()->setTitle('Puntaje');
+        $styleFuncionario = array(
+            'font'  => array(
+                'bold'  => true,
+                'size'  => 7,
+                'name'  => 'Arial',
+                'color' => array(
+                    'rgb' => '070707'
+                )
+            ),
+            'borders' => array(
+                'allborders' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                )
+            ),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+            ),
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => array(
+                    'rgb' => 'C9DAE2'
+                )
+            ),
+        );
+        $styleCatalogo = array(
+            'font'  => array(
+                'bold'  => true,
+                'size'  => 7,
+                'name'  => 'Arial',
+                'color' => array(
+                    'rgb' => '070707'
+                )
+            ),
+            'borders' => array(
+                'allborders' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                )
+            ),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+            ),
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => array(
+                    'rgb' => 'C9DAE2'
+                )
+            ),
+        );
+        $styleCatalogo4 = array(
+            'font'  => array(
+                'bold'  => true,
+                'size'  => 6,
+                'name'  => 'Arial',
+                'color' => array(
+                    'rgb' => '070707'
+                )
+            ),
+            'borders' => array(
+                'allborders' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                )
+            ),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+            ),
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => array(
+                    'rgb' => 'F0C859'
+                )
+            ),
+        );
+        $styleTitulos = array(
+            'font'  => array(
+                'bold'  => true,
+                'size'  => 12,
+                'name'  => 'Arial',
+                'color' => array(
+                    'rgb' => 'FFFFFF'
+                )
+            ),
+            'alignment' => array(
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+            ),
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => array(
+                    'rgb' => '022D8A'
+                )
+            ),
+        );
+        $datos = $this->objParam->getParametro('datos');
+        $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(1,3,'PUNTAJE GENERAL EVALUACION DESEMPEÑO VALORES 360 GRADOS');
+        $this->docexcel->getActiveSheet()->getColumnDimension('B')->setWidth(50);
+        $this->docexcel->getActiveSheet()->getColumnDimension('C')->setWidth(50);
+        $this->docexcel->getActiveSheet()->getColumnDimension('D')->setWidth(10);
+        $this->docexcel->getActiveSheet()->getStyle('B5:D7')->applyFromArray($styleFuncionario);
+        $this->docexcel->getActiveSheet()->getStyle('B5:D7')->getAlignment()->setWrapText(true);
+        $this->docexcel->getActiveSheet()->setCellValue('B5','Nombre');
+        $this->docexcel->getActiveSheet()->mergeCells('B5:B7');
+        $this->docexcel->getActiveSheet()->setCellValue('C5','Cargo');
+        $this->docexcel->getActiveSheet()->mergeCells('C5:C7');
+        $this->docexcel->getActiveSheet()->setCellValue('D5','Ger.');
+        $this->docexcel->getActiveSheet()->mergeCells('D5:D7');
+        foreach ($datos as $value) {
+            if (!array_key_exists($value['evaluacion'], $this->titulo) ||
+                !array_key_exists($value['peso_encuesta'], $this->titulo[$value['evaluacion']])) {
+                $this->titulo[$value['evaluacion']][$value['peso_encuesta']] = 1;
+            } else {
+                $this->titulo[$value['evaluacion']][$value['peso_encuesta']]++;
+            }
+        }
+        $dibujar =  array_merge($this->titulo, array('PUNTAJE TOTAL' => array()));
+        $columna = 4;
+        $total = 0;
+        foreach ($dibujar as $item => $key){
+            $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna, 5, $item);
+            $this->docexcel->getActiveSheet()->getColumnDimension($this->equivalencias[$columna])->setWidth(25);
+            $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[4] . "5:" . $this->equivalencias[$columna] . "6")->getAlignment()->setWrapText(true);
+            $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[4] . "5:" . $this->equivalencias[$columna] . "6")->applyFromArray($styleCatalogo);
+            $this->docexcel->getActiveSheet()->mergeCells($this->equivalencias[$columna] . "5:" . $this->equivalencias[$columna] . "6");
+            foreach ($key as $item1 => $key2){
+                $total = $item1 + $total ;
+                $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna,7, $item1);
+                $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna + 1,7, $total);
+                $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[4] . "7:" . $this->equivalencias[$columna] . "7")->getAlignment()->setWrapText(true);
+                $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[4] . "7:" . $this->equivalencias[$columna + 1] . "7")->applyFromArray($styleCatalogo4);
+            }
+            $columna++;
+            $this->list2 = $columna;
+        }
+        $this->docexcel->getActiveSheet()->getStyle("B3:" . $this->equivalencias[$this->list2 - 1] . "4")->applyFromArray($styleTitulos);
+        $this->docexcel->getActiveSheet()->mergeCells("B3:" . $this->equivalencias[$this->list2 - 1] . "4");
+
+        $styleTitulos = array(
+            'borders' => array(
+                'allborders' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THIN
+                )
+            ),
+            'fill' => array(
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => array(
+                    'rgb' => 'F8FAFB'
+                )
+            ),
+        );
+        $datos = $this->objParam->getParametro('datos');
+        foreach ($datos as $value) {
+            if (!array_key_exists($value['desc_funcionario1'], $this->nombres2) ||
+                !array_key_exists($value['descripcion_cargo'], $this->nombres2[$value['desc_funcionario1']]) ||
+                !array_key_exists($value['gerencia'], $this->nombres[$value['desc_funcionario1']][$value['descripcion_cargo']])
+            ) {
+                $this->nombres2[$value['desc_funcionario1']][$value['descripcion_cargo']][$value['gerencia']] = 1;
+            } else {
+                $this->nombres2[$value['desc_funcionario1']][$value['descripcion_cargo']][$value['gerencia']] ++;
+            }
+        }
+        $fill = 8;
+        foreach ($this->nombres2 as $nombre => $key){
+            $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(1, $fill, $nombre);
+            $this->docexcel->getActiveSheet()->getStyle($this->equivalencias[1] . $fill . ":" . $this->equivalencias[$this->list2 - 1] . $fill)->applyFromArray($styleTitulos);
+            foreach ($key as $cargo => $key2){
+                $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(2, $fill, $cargo);
+                foreach ($key2 as $ger => $key4){
+                    $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(3, $fill, $ger);
+                }
+            }
+            $fill ++;
+        }
+        // nombres
+        foreach ($datos as $value) {
+            if (!array_key_exists($value['desc_funcionario1'], $this->content2) ||
+                !array_key_exists($value['evaluacion'], $this->content2[$value['desc_funcionario1']]) ||
+                !array_key_exists($value['puntaje'], $this->content2[$value['evaluado']][$value['evaluacion']])
+            ) {
+                $this->content2[$value['desc_funcionario1']][$value['evaluacion']][$value['puntaje']] = 1;
+            } else {
+                $this->content2[$value['desc_funcionario1']][$value['evaluacion']][$value['puntaje']] ++;
+            }
+        }
+        $fila = 8;
+        foreach ($this->content2 as $funcionario => $key){
+       //     $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow(0, $fila, $funcionario);
+            $columna = 4;
+            foreach ($key as $evaluacion => $key2){
+                foreach ($key2 as  $resultado => $key3){
+                    $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($columna, $fila, $resultado);
+                    $this->docexcel->getActiveSheet()->setCellValueByColumnAndRow($this->list2 - 1 , $fila, "=SUM(" . $this->equivalencias[4] . "$fila:" . $this->equivalencias[$columna] ."$fila)");
                     $columna++;
                 }
             }
