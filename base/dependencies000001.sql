@@ -402,4 +402,12 @@ AS
   GROUP BY en.id_encuesta,
            re.id_func_evaluado;
 /**********************************F-DEP-MMV-SSIG-18-21/05/2020********************************************/
+/**********************************I-DEP-MMV-SSIG-20-16/06/2020********************************************/
+ALTER TABLE ssig.tencuesta
+  ADD COLUMN peso_pregunta NUMERIC;
+
+
+  ALTER TABLE ssig.peso_encuesta
+  ADD COLUMN peso_pregunta NUMERIC;
+/**********************************F-DEP-MMV-SSIG-20-16/06/2020********************************************/
 
