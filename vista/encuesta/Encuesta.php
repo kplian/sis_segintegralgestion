@@ -5,6 +5,8 @@
  *@author  Gonzalo Sarmiento Sejas
  *@date 21-02-2013 15:04:03
  *@description Archivo con la interfaz de usuario que permite la ejecucion de todas las funcionalidades del sistema
+ #ISSUE				FECHA				AUTOR				DESCRIPCION
+ #20               16/06/2020           MMV                 Nuevos capos peso pregunta y encuesta
  */
 header("content-type: text/javascript; charset=UTF-8");
 ?>
@@ -101,6 +103,7 @@ header("content-type: text/javascript; charset=UTF-8");
                     lazyRender:true,
                     mode: 'local',
                     anchor: '50%',
+                    disabled:false, // #20  
                     store:['encuesta','grupo','categoria','pregunta']
                 },
                 type:'ComboBox',
@@ -129,7 +132,7 @@ header("content-type: text/javascript; charset=UTF-8");
                     fieldLabel: 'Nombre',
                     allowBlank: false,
                     anchor: '50%',
-                    gwidth: 400
+                    gwidth: 450
                 },
                 type:'TextArea',
                 filters:{pfiltro:'eta.nombre',type:'string'},
@@ -189,16 +192,17 @@ header("content-type: text/javascript; charset=UTF-8");
                 type:'Checkbox',
                 filters:{pfiltro:'eta.habilitado_categoria',type:'boolean'},
                 id_grupo:1,
-                grid:true,
-                form:true
+                grid:false,
+                form:false
             },
             {
                 config: {
                     name: 'peso_categoria',
-                    fieldLabel: 'Peso',
+                    fieldLabel: 'Peso Categoria',
                     allowBlank: true,
-                    anchor: '40%',
-                    gwidth: 100
+                    anchor: '25%',
+                    gwidth: 100,
+                    style: 'background-color: #5BF36A; background-image: none;',
                 },
                 type: 'NumberField',
                 filters: {pfiltro: 'eta.peso_categoria',type: 'numeric'},
@@ -227,8 +231,40 @@ header("content-type: text/javascript; charset=UTF-8");
                 type:'Checkbox',
                 filters:{pfiltro:'eta.habilitado_pregunta',type:'boolean'},
                 id_grupo:1,
-                grid:true,
-                form:true
+                grid:false,
+                form:false
+            },
+            {  // #20  
+                config: {
+                    name: 'peso_pregunta',
+                    fieldLabel: 'Peso Pregunta',
+                    allowBlank: true,
+                    anchor: '25%',
+                    gwidth: 100,
+                    decimalPrecision: 4
+                },
+                type: 'NumberField',
+                filters: {pfiltro: 'eta.peso_pregunta',type: 'numeric'},
+                id_grupo: 1,
+                grid: true,
+                form: true
+            },
+            { // #20  
+                config: {
+                    name: 'peso_encuesta',
+                    fieldLabel: 'Peso Encuesta',
+                    allowBlank: true,
+                    anchor: '25%',
+                    gwidth: 100,
+                    decimalPrecision: 4,
+                    style: 'background-color: #5BF36A; background-image: none;',
+
+                },
+                type: 'NumberField',
+                filters: {pfiltro: 'eta.peso_encuesta',type: 'numeric'},
+                id_grupo: 1,
+                grid: true,
+                form: true
             },
             {
                 config: {
@@ -241,7 +277,7 @@ header("content-type: text/javascript; charset=UTF-8");
                         fields: [
                             'tipo'
                         ],
-                        data: [['Selección'], ['Texto']]
+                        data: [['Selección']]
                     }),
                     valueField: 'tipo',
                     displayField: 'tipo',
@@ -419,7 +455,9 @@ header("content-type: text/javascript; charset=UTF-8");
             {name:'usr_reg', type: 'string'},
             {name:'usr_mod', type: 'string'},
             {name:'tipo', type: 'string'},
-            {name:'tipo_nombre', type: 'string'}
+            {name:'tipo_nombre', type: 'string'},
+            {name:'peso_pregunta', type: 'numeric'} ,
+            {name:'peso_encuesta', type: 'numeric'}
 
         ],
         sortInfo:{
@@ -436,7 +474,6 @@ header("content-type: text/javascript; charset=UTF-8");
             else {
                 this.tbar.items.get('b-new-'+this.idContenedor).disable()
             }
-            console.log(n.attributes.tipo_nodo);
             Phx.vista.Encuesta.superclass.preparaMenu.call(this,n);
         },
         liberaMenu:function(n){
@@ -444,9 +481,7 @@ header("content-type: text/javascript; charset=UTF-8");
         },
         iniciarEvento:function () {
             this.ocultarComponente(this.Cmp.obs_dba);
-            this.ocultarComponente(this.Cmp.habilitado_categoria);
             this.ocultarComponente(this.Cmp.peso_categoria);
-            this.ocultarComponente(this.Cmp.habilitado_pregunta);
             this.ocultarComponente(this.Cmp.tipo_pregunta);
         },
         getTipoCuentaPadre: function(n) {
@@ -464,88 +499,87 @@ header("content-type: text/javascript; charset=UTF-8");
         onButtonNew:function(n){
             Phx.vista.Encuesta.superclass.onButtonNew.call(this);
             this.eventoForm();
+            this.Cmp.tipo_nombre.enable();
         },
 
         onButtonEdit:function(n){
-
             Phx.vista.Encuesta.superclass.onButtonEdit.call(this);
-            this.iniciarEvento();
-
+             this.iniciarEvento();
             if (this.Cmp.tipo_nombre.getValue()  === 'encuesta'){
                 this.mostrarComponente(this.Cmp.tipo);
-                this.ocultarComponente(this.Cmp.habilitado_categoria);
+                this.mostrarComponente(this.Cmp.peso_encuesta);
                 this.ocultarComponente(this.Cmp.peso_categoria);
-                this.ocultarComponente(this.Cmp.habilitado_pregunta);
                 this.ocultarComponente(this.Cmp.tipo_pregunta);
+                this.ocultarComponente(this.Cmp.peso_pregunta);
                 this.mostrarComponente(this.Cmp.nro_order);
 
             }
             if (this.Cmp.tipo_nombre.getValue() === 'grupo'){
                 this.ocultarComponente(this.Cmp.tipo);
-                this.ocultarComponente(this.Cmp.habilitado_categoria);
                 this.ocultarComponente(this.Cmp.peso_categoria);
-                this.ocultarComponente(this.Cmp.habilitado_pregunta);
                 this.ocultarComponente(this.Cmp.tipo_pregunta);
+                this.ocultarComponente(this.Cmp.peso_pregunta);
                 this.mostrarComponente(this.Cmp.nro_order);
+                this.ocultarComponente(this.Cmp.peso_encuesta);
 
             }
             if (this.Cmp.tipo_nombre.getValue() === 'categoria'){
                 this.ocultarComponente(this.Cmp.tipo);
-                this.mostrarComponente(this.Cmp.habilitado_categoria);
                 this.mostrarComponente(this.Cmp.peso_categoria);
-                this.ocultarComponente(this.Cmp.habilitado_pregunta);
+                this.ocultarComponente(this.Cmp.peso_pregunta);
                 this.ocultarComponente(this.Cmp.tipo_pregunta);
                 this.mostrarComponente(this.Cmp.nro_order);
+                this.ocultarComponente(this.Cmp.peso_encuesta);
 
             }
             if (this.Cmp.tipo_nombre.getValue() === 'pregunta'){
                 this.ocultarComponente(this.Cmp.tipo);
-                this.ocultarComponente(this.Cmp.habilitado_categoria);
                 this.ocultarComponente(this.Cmp.peso_categoria);
-                this.mostrarComponente(this.Cmp.habilitado_pregunta);
                 this.mostrarComponente(this.Cmp.tipo_pregunta);
                 this.ocultarComponente(this.Cmp.nro_order);
-                this.mostrarComponente(this.Cmp.nro_order);
-
+                this.mostrarComponente(this.Cmp.peso_pregunta);
+                this.ocultarComponente(this.Cmp.peso_encuesta);
             }
             this.eventoForm();
+            this.Cmp.tipo_nombre.disable();
+
         },
         eventoForm:function () {
             this.Cmp.tipo_nombre.on('select', function( combo, record, index){
                 if (record.data.field1 === 'encuesta'){
                     this.mostrarComponente(this.Cmp.tipo);
-                    this.ocultarComponente(this.Cmp.habilitado_categoria);
+                    this.mostrarComponente(this.Cmp.peso_encuesta);
                     this.ocultarComponente(this.Cmp.peso_categoria);
-                    this.ocultarComponente(this.Cmp.habilitado_pregunta);
                     this.ocultarComponente(this.Cmp.tipo_pregunta);
+                    this.ocultarComponente(this.Cmp.peso_pregunta);
                     this.mostrarComponente(this.Cmp.nro_order);
-
                 }
                 if (record.data.field1 === 'grupo'){
                     this.ocultarComponente(this.Cmp.tipo);
-                    this.ocultarComponente(this.Cmp.habilitado_categoria);
                     this.ocultarComponente(this.Cmp.peso_categoria);
-                    this.ocultarComponente(this.Cmp.habilitado_pregunta);
                     this.ocultarComponente(this.Cmp.tipo_pregunta);
+                    this.ocultarComponente(this.Cmp.peso_pregunta);
                     this.mostrarComponente(this.Cmp.nro_order);
-
+                    this.ocultarComponente(this.Cmp.peso_encuesta);
                 }
                 if (record.data.field1 === 'categoria'){
                     this.ocultarComponente(this.Cmp.tipo);
-                    this.mostrarComponente(this.Cmp.habilitado_categoria);
                     this.mostrarComponente(this.Cmp.peso_categoria);
-                    this.ocultarComponente(this.Cmp.habilitado_pregunta);
                     this.ocultarComponente(this.Cmp.tipo_pregunta);
+                    this.ocultarComponente(this.Cmp.peso_pregunta);
                     this.mostrarComponente(this.Cmp.nro_order);
+                    this.ocultarComponente(this.Cmp.peso_encuesta);
+
 
                 }
                 if (record.data.field1 === 'pregunta'){
                     this.ocultarComponente(this.Cmp.tipo);
-                    this.ocultarComponente(this.Cmp.habilitado_categoria);
                     this.ocultarComponente(this.Cmp.peso_categoria);
-                    this.mostrarComponente(this.Cmp.habilitado_pregunta);
                     this.mostrarComponente(this.Cmp.tipo_pregunta);
+                    this.mostrarComponente(this.Cmp.peso_pregunta);
                     this.ocultarComponente(this.Cmp.nro_order);
+                    this.ocultarComponente(this.Cmp.peso_encuesta);
+
                 }
             },this);
 

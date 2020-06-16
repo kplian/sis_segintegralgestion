@@ -192,7 +192,7 @@ class MODCuestionario extends MODbase{
         //Ejecuta la instruccion
         $this->armarConsulta();
         $this->ejecutarConsulta();
-        // var_dump($this->respuesta);exit;
+        //var_dump($this->respuesta);exit;
         //Devuelve la respuesta
         return $this->respuesta;
     }
@@ -205,10 +205,13 @@ class MODCuestionario extends MODbase{
 
         $this->captura('id_encuesta','integer');
         $this->captura('evaluacion','varchar');
-        $this->captura('codigo','varchar');
+        $this->captura('gerencia','varchar');
+        $this->captura('id_func_evaluado','integer');
         $this->captura('desc_funcionario1','text');
-        $this->captura('nombre_cargo','varchar');
+        $this->captura('descripcion_cargo','varchar');
         $this->captura('resultado','numeric');
+        $this->captura('peso_encuesta','numeric');
+        $this->captura('puntaje','numeric');
 
         //Ejecuta la instruccion
         $this->armarConsulta();

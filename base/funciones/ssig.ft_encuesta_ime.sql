@@ -17,7 +17,8 @@ $body$
  HISTORIAL DE MODIFICACIONES:
 #ISSUE				FECHA				AUTOR				DESCRIPCION
  #0				29-04-2020 06:10:09								Funcion que gestiona las operaciones basicas (inserciones, modificaciones, eliminaciones de la tabla 'ssig.tencuesta'
- #
+ #20               16/06/2020           MMV                 Nuevos capos peso pregunta y encuesta
+
  ***************************************************************************/
 
 DECLARE
@@ -108,7 +109,9 @@ BEGIN
 			id_usuario_mod,
 			fecha_mod,
             tipo,
-            tipo_nombre
+            tipo_nombre,
+            peso_pregunta,
+            peso_encuesta
           	) values(
 			'activo',
 			v_parametros.obs_dba,
@@ -129,7 +132,9 @@ BEGIN
 			null,
 			null,
             v_parametros.tipo,
-            v_parametros.tipo_nombre
+            v_parametros.tipo_nombre,
+            v_parametros.peso_pregunta,
+            v_parametros.peso_encuesta
 			)RETURNING id_encuesta into v_id_encuesta;
 
 			--Definicion de la respuesta
@@ -152,6 +157,8 @@ BEGIN
 	elsif(p_transaccion='SSIG_ETA_MOD')then
 
 		begin
+
+
         v_id_encuesta_padre = null;
 
            v_grupo = 'no';
@@ -198,7 +205,9 @@ BEGIN
 			id_usuario_ai = v_parametros._id_usuario_ai,
 			usuario_ai = v_parametros._nombre_usuario_ai,
             tipo = v_parametros.tipo,
-            tipo_nombre = v_parametros.tipo_nombre
+            tipo_nombre = v_parametros.tipo_nombre,
+            peso_pregunta = v_parametros.peso_pregunta,
+            peso_encuesta = v_parametros.peso_encuesta
 			where id_encuesta=v_parametros.id_encuesta;
 
 			--Definicion de la respuesta
