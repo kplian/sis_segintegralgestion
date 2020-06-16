@@ -415,3 +415,13 @@ CREATE TABLE ssig.tcategoria (
 WITH (oids = false);
 
 /***********************************F-SCP-MANU-SSIG-2-30/04/2020****************************************/
+/**********************************I-SCP-MMV-SSIG-20-16/06/2020********************************************/
+ALTER TABLE ssig.tencuesta
+  ADD COLUMN peso_pregunta NUMERIC;
+
+--------------- SQL ---------------
+
+ALTER TABLE ssig.tencuesta
+  ADD COLUMN peso_encuesta NUMERIC;
+/**********************************F-SCP-MMV-SSIG-20-16/06/2020********************************************/
+
