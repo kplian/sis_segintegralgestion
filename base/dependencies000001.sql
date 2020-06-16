@@ -406,8 +406,9 @@ AS
 ALTER TABLE ssig.tencuesta
   ADD COLUMN peso_pregunta NUMERIC;
 
+--------------- SQL ---------------
 
-  ALTER TABLE ssig.peso_encuesta
+ALTER TABLE ssig.tencuesta
   ADD COLUMN peso_encuesta NUMERIC;
 /**********************************F-DEP-MMV-SSIG-20-16/06/2020********************************************/
 
